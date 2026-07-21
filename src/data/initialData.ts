@@ -2,25 +2,28 @@ import { Product, Category, Brand, Testimonial, SiteConfig, SEOConfig } from "@/
 
 export const INITIAL_SITE_CONFIG: SiteConfig = {
   companyName: "One Pack",
-  tagline: "ONE SOURCE. EVERY PACK.",
+  tagline: "ONE SOURCE EVERY PACK",
   heroHeading: "One Source.\nEvery Pack.",
-  heroSubheading: "Premium bio disposable packaging solutions for businesses. Serving restaurants, hotels, cafes, bakeries, juice shops, catering & wholesale dealers.",
+  heroSubheading: "PREMIUM BIO DISPOSABLE & PACKAGING SOLUTIONS. We only sell bio products - No Plastic. Serving restaurants, hotels, cafes, bakeries, juice shops, catering & wholesale dealers across Kasaragod.",
   heroImage: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=1200&auto=format&fit=crop",
-  whatsappNumber: "919995216808",
+  whatsappNumber: "919019966790",
   phoneNumber: "+91 99952 16808",
   secondaryPhone: "+91 90199 66790",
   email: "info@onepackonline.com",
-  address: "NH 66, Opp. Municipal Complex, Kasaragod",
-  cityState: "Kasaragod, Kerala - 671121",
-  googleMapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d62329.13840212879!2d74.9654157!3d12.510247!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba4864fa1e2a045%3A0x8ff6bbbb!2sKasaragod%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
+  address: "3rd floor, Brothers Traders, Railway Station road",
+  cityState: "Kanhangad, 671315",
+  gstin: "32AALFB1621M1ZN",
+  deliveryArea: "DELIVERY ALL OVER KASARAGOD",
+  bioNotice: "WE ONLY SELL BIO PRODUCTS - NO PLASTIC",
+  googleMapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3898.3496464879036!2d75.09355!3d12.31688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba47f524458b2bd%3A0x4a1804f58bdf0590!2sKanhangad%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
   cataloguePdfUrl: "#download-catalogue",
   workingHours: "Mon - Sat: 9:00 AM - 7:00 PM | Sun: Closed"
 };
 
 export const INITIAL_SEO_CONFIG: SEOConfig = {
-  siteTitle: "One Pack | Premium Eco Disposable B2B Food Packaging",
-  siteDescription: "Leading supplier of eco-friendly disposable packaging solutions in Kerala. Bio paper plates, cups, containers, wooden cutlery, meal boxes, carry bags for restaurants, hotels & caterers.",
-  keywords: "bio packaging, food grade containers, paper cups, paper plates, wooden cutlery, meal boxes, biodegradable packaging Kasaragod, wholesale food packaging Kerala",
+  siteTitle: "One Pack | Premium Bio Disposable & Packaging Solutions Kanhangad",
+  siteDescription: "One Source. Every Pack. Leading wholesale supplier of 100% biodegradable food packaging in Kanhangad, Kasaragod. We only sell bio products - No Plastic. Call: +91 99952 16808, WhatsApp: +91 90199 66790. GSTIN: 32AALFB1621M1ZN.",
+  keywords: "one pack, bio packaging Kanhangad, food packaging Kasaragod, eco disposable tableware, paper plates wholesale, wooden cutlery Kerala, GSTIN 32AALFB1621M1ZN, biodegradable containers",
   ogImage: "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8?q=80&w=1200&auto=format&fit=crop"
 };
 

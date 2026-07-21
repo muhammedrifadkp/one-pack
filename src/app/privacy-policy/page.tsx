@@ -47,7 +47,7 @@ export default function PrivacyPolicyPage() {
 
           <h3 className="text-base font-bold text-[#222222] pt-2">5. Contact Information</h3>
           <p>
-            For any privacy inquiries or data update requests, please contact us via email at <strong>info@onepackonline.com</strong> or phone at <strong>+91 99952 16808</strong>.
+            For any privacy inquiries or data update requests, please contact us via email at <strong>info@onepackonline.com</strong>, phone at <strong>+91 99952 16808</strong>, or WhatsApp at <strong>+91 90199 66790</strong>. Address: 3rd floor, Brothers Traders, Railway Station road, Kanhangad, 671315.
           </p>
         </div>
       </div>

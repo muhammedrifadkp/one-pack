@@ -38,7 +38,7 @@
   <!-- Inner Frame Accent -->
   <rect x="22" y="22" width="468" height="468" rx="93" fill="none" stroke="#C89A2B" stroke-width="2" stroke-opacity="0.35"/>
 
-  <!-- Scaled-Up 3D Open Package Box & "1" Monogram Group (Scaled 1.45x) -->
+  <!-- Scaled-Up 3D Open Package Box & "1" Monogram Group (Scaled 1.42x) -->
   <g transform="translate(256, 256) scale(1.42) translate(-256, -215)">
     
     <!-- Top Left Flap -->

@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { MessageCircle, Phone, Mail, MapPin, Download, Globe, Share2 } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle, Phone, Mail, MapPin, Download, Globe, Share2, FileCheck, ShieldCheck, Truck } from "lucide-react";
 import { useCms } from "@/context/CmsContext";
 
 export const Footer: React.FC = () => {
@@ -21,25 +22,27 @@ export const Footer: React.FC = () => {
           
           {/* Brand Info */}
           <div className="lg:col-span-1 space-y-4">
-            <Link href="/" className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#C89A2B] text-white flex items-center justify-center font-bold text-lg">
-                1P
-              </div>
-              <div className="flex flex-col">
-                <span className="text-xl font-black text-white tracking-tight font-heading">
-                  One pack
-                </span>
-                <span className="text-[9px] tracking-widest font-semibold text-[#C89A2B] uppercase">
-                  {siteConfig.tagline}
-                </span>
-              </div>
+            <Link href="/" className="inline-block bg-white px-3 py-2 rounded-xl shadow-md hover:shadow-lg transition-all group">
+              <Image
+                src="/LOGO.png"
+                alt="One Pack Logo"
+                width={190}
+                height={50}
+                className="h-8 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+              />
             </Link>
 
             <p className="text-xs text-gray-400 leading-relaxed">
-              Premium bio disposable packaging solutions for every business. Eco-friendly, food-grade, and direct factory wholesale prices.
+              Premium bio disposable packaging solutions. We only sell bio products — no plastic.
             </p>
 
-            <div className="flex items-center gap-3 pt-2">
+            {/* Bio notice badge */}
+            <div className="inline-flex items-center gap-1.5 bg-[#122E1F] border border-emerald-800/60 px-3 py-1.5 rounded-lg text-[10px] font-bold text-[#E6C673]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#E6C673]" />
+              <span>NO PLASTIC — 100% BIO</span>
+            </div>
+
+            <div className="flex items-center gap-3 pt-1">
               <a
                 href={catalogueWhatsAppUrl}
                 target="_blank"
@@ -126,14 +129,14 @@ export const Footer: React.FC = () => {
           {/* Contact Details */}
           <div>
             <h3 className="text-xs font-bold text-white uppercase tracking-wider mb-4 border-l-2 border-[#C89A2B] pl-2">
-              CONTACT
+              CONTACT & GST
             </h3>
             <ul className="space-y-3 text-xs text-gray-400">
               <li className="flex items-start gap-2.5">
                 <Phone className="w-4 h-4 text-[#C89A2B] shrink-0 mt-0.5" />
                 <div className="flex flex-col">
-                  <span>{siteConfig.phoneNumber}</span>
-                  {siteConfig.secondaryPhone && <span>{siteConfig.secondaryPhone}</span>}
+                  <span>Call: <strong className="text-white">{siteConfig.phoneNumber}</strong></span>
+                  <span>WhatsApp: <strong className="text-[#25D366]">{siteConfig.secondaryPhone}</strong></span>
                 </div>
               </li>
               <li className="flex items-center gap-2.5">
@@ -146,6 +149,18 @@ export const Footer: React.FC = () => {
                   {siteConfig.address}, {siteConfig.cityState}
                 </span>
               </li>
+              {siteConfig.gstin && (
+                <li className="flex items-center gap-2.5 text-gray-300">
+                  <FileCheck className="w-4 h-4 text-[#C89A2B] shrink-0" />
+                  <span>GSTIN: <strong className="text-white">{siteConfig.gstin}</strong></span>
+                </li>
+              )}
+              {siteConfig.deliveryArea && (
+                <li className="flex items-center gap-2.5 text-emerald-400 font-semibold">
+                  <Truck className="w-4 h-4 text-[#C89A2B] shrink-0" />
+                  <span>{siteConfig.deliveryArea}</span>
+                </li>
+              )}
             </ul>
           </div>
 

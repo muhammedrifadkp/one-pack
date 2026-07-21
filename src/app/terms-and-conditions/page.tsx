@@ -42,7 +42,7 @@ export default function TermsAndConditionsPage() {
 
           <h3 className="text-base font-bold text-[#222222] pt-2">4. Tax & Billing Compliance</h3>
           <p>
-            Official tax invoices (GST compliant) are issued for all processed business orders. Applicable GST rates and transport freight charges are specified transparently during order confirmation.
+            Official tax invoices (GST compliant under GSTIN: <strong>32AALFB1621M1ZN</strong>) are issued for all processed business orders. Applicable GST rates and transport freight charges are specified transparently during order confirmation.
           </p>
 
           <h3 className="text-base font-bold text-[#222222] pt-2">5. Jurisdiction</h3>

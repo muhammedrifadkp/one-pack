@@ -4,7 +4,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2, User, Building, MapPin as CityIcon } from "lucide-react";
+import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2, User, Building, MapPin as CityIcon, FileCheck, ShieldCheck, Truck } from "lucide-react";
 import { useCms } from "@/context/CmsContext";
 
 const contactSchema = z.object({
@@ -52,14 +52,15 @@ I would like to enquire about your products.`;
       {/* Header Banner */}
       <section className="bg-[#FAF7F0] border-b border-[#F3E2B8] py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <span className="text-xs font-bold text-[#C89A2B] uppercase tracking-widest">
-            GET IN TOUCH
-          </span>
+          <div className="inline-flex items-center gap-2 bg-[#122E1F] text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wider">
+            <ShieldCheck className="w-4 h-4 text-[#E6C673]" />
+            <span>WE ONLY SELL BIO PRODUCTS - NO PLASTIC</span>
+          </div>
           <h1 className="text-4xl sm:text-5xl font-black text-[#222222] font-heading">
             Contact One Pack
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Have a bulk packaging enquiry or need a custom quote? Fill out the form below to chat directly with our sales team on WhatsApp.
+            Have a bulk packaging enquiry or need a custom quote? Fill out the form below or reach us directly via phone or WhatsApp.
           </p>
         </div>
       </section>
@@ -83,39 +84,75 @@ I would like to enquire about your products.`;
             </div>
 
             <div className="space-y-5 bg-white p-6 rounded-3xl border border-gray-100 shadow-sm">
+              
+              {/* Call Number */}
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">
                   <Phone className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Phone & WhatsApp</h4>
-                  <p className="text-sm font-bold text-[#222222] mt-0.5">{siteConfig.phoneNumber}</p>
-                  {siteConfig.secondaryPhone && (
-                    <p className="text-xs text-gray-600">{siteConfig.secondaryPhone}</p>
-                  )}
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Call Contact</h4>
+                  <a href={`tel:${siteConfig.phoneNumber.replace(/[^0-9+]/g, "")}`} className="text-sm font-bold text-[#222222] hover:text-[#C89A2B] mt-0.5 block">
+                    {siteConfig.phoneNumber}
+                  </a>
                 </div>
               </div>
 
+              {/* WhatsApp Number */}
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">
-                  <Mail className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-2xl bg-[#E8F9EE] text-[#25D366] flex items-center justify-center shrink-0">
+                  <MessageCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Address</h4>
-                  <p className="text-sm font-bold text-[#222222] mt-0.5">{siteConfig.email}</p>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">WhatsApp Contact</h4>
+                  <a
+                    href={`https://wa.me/${siteConfig.whatsappNumber}?text=${encodeURIComponent("Hello One Pack, I have an inquiry.")}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-bold text-[#25D366] hover:underline mt-0.5 block"
+                  >
+                    {siteConfig.secondaryPhone || "+91 90199 66790"}
+                  </a>
                 </div>
               </div>
 
+              {/* GST TIN */}
+              {siteConfig.gstin && (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">
+                    <FileCheck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">GST TIN</h4>
+                    <p className="text-sm font-bold text-[#222222] mt-0.5">{siteConfig.gstin}</p>
+                  </div>
+                </div>
+              )}
+
+              {/* Address */}
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Warehouse Location</h4>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Office & Warehouse Address</h4>
                   <p className="text-sm font-bold text-[#222222] mt-0.5">{siteConfig.address}</p>
                   <p className="text-xs text-gray-500">{siteConfig.cityState}</p>
                 </div>
               </div>
+
+              {/* Delivery Area */}
+              {siteConfig.deliveryArea && (
+                <div className="flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-2xl bg-[#E8F5E9] text-emerald-700 flex items-center justify-center shrink-0">
+                    <Truck className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Delivery Coverage</h4>
+                    <p className="text-xs font-bold text-emerald-800 mt-0.5">{siteConfig.deliveryArea}</p>
+                  </div>
+                </div>
+              )}
 
               <div className="flex items-start gap-4">
                 <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">

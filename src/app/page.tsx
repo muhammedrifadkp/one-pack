@@ -160,6 +160,11 @@ export default function HomePage() {
               transition={{ duration: 0.5 }}
               className="lg:col-span-5 space-y-6 lg:py-2"
             >
+              <div className="inline-flex items-center gap-2 bg-[#122E1F] text-white px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider">
+                <ShieldCheck className="w-4 h-4 text-[#E6C673]" />
+                <span>WE ONLY SELL BIO PRODUCTS — NO PLASTIC</span>
+              </div>
+
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-[1.12]">
                 <span className="text-[#111111] block">One Source.</span>
                 <span className="text-[#C89A2B] block mt-1">Every Pack.</span>

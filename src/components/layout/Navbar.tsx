@@ -4,7 +4,8 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { MessageCircle, Menu, X, ChevronDown, PackageSearch, SlidersHorizontal } from "lucide-react";
+import Image from "next/image";
+import { MessageCircle, Menu, X, ChevronDown, PackageSearch, SlidersHorizontal, Phone, ShieldCheck, Truck } from "lucide-react";
 import { useCms } from "@/context/CmsContext";
 
 export const Navbar: React.FC = () => {
@@ -35,26 +36,65 @@ export const Navbar: React.FC = () => {
   });
 
   return (
-    <header
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
-          ? "bg-white/95 backdrop-blur-md shadow-md py-3 border-b border-gray-100"
-          : "bg-white py-5 border-b border-gray-100"
-      }`}
-    >
+    <header className="fixed top-0 left-0 right-0 z-50">
+      {/* Top Company Info Bar */}
+      <div className="bg-[#122E1F] text-white text-[11px] font-medium py-1.5 px-4 border-b border-emerald-900/40">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
+          <div className="flex items-center gap-4">
+            <span className="inline-flex items-center gap-1 text-[#E6C673] font-bold">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#E6C673]" />
+              WE ONLY SELL BIO PRODUCTS - NO PLASTIC
+            </span>
+            <span className="hidden md:inline-block text-emerald-700">|</span>
+            <span className="hidden md:inline-flex items-center gap-1 text-emerald-200">
+              <Truck className="w-3.5 h-3.5 text-[#E6C673]" />
+              DELIVERY ALL OVER KASARAGOD
+            </span>
+          </div>
+
+          <div className="flex items-center gap-4 ml-auto">
+            <a
+              href={`tel:${siteConfig.phoneNumber.replace(/[^0-9+]/g, "")}`}
+              className="inline-flex items-center gap-1 hover:text-[#E6C673] transition-colors"
+            >
+              <Phone className="w-3 h-3 text-[#E6C673]" />
+              <span>Call: <strong className="text-white">{siteConfig.phoneNumber}</strong></span>
+            </a>
+            <span className="text-emerald-700">|</span>
+            <a
+              href={orderWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 hover:text-[#25D366] transition-colors"
+            >
+              <MessageCircle className="w-3 h-3 text-[#25D366]" />
+              <span>WhatsApp: <strong className="text-white">{siteConfig.secondaryPhone}</strong></span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Navbar */}
+      <div
+        className={`transition-all duration-300 ${
+          isScrolled
+            ? "bg-white/95 backdrop-blur-md shadow-md py-3 border-b border-gray-100"
+            : "bg-white py-4 border-b border-gray-100"
+        }`}
+      >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
           {/* Brand Logo */}
-          <Link href="/" className="flex flex-col group">
-            <div className="flex items-center text-2xl font-black tracking-tight font-heading leading-none">
-              <span className="text-[#C89A2B]">One</span>
-              <span className="text-gray-300 font-light mx-1">|</span>
-              <span className="text-[#222222]">pack</span>
-            </div>
-            <span className="text-[8px] tracking-[0.2em] font-bold text-[#C89A2B] uppercase mt-1">
-              {siteConfig.tagline}
-            </span>
+          <Link href="/" className="flex items-center group py-0.5">
+            <Image
+              src="/LOGO.png"
+              alt="One Pack Logo"
+              width={220}
+              height={60}
+              priority
+              className="h-10 sm:h-12 w-auto object-contain transition-transform duration-200 group-hover:scale-105"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}
@@ -234,6 +274,7 @@ export const Navbar: React.FC = () => {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </header>
   );
 };

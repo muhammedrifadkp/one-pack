@@ -83,10 +83,10 @@ export default function AboutPage() {
 
             <div className="space-y-4 text-xs sm:text-sm text-gray-600 leading-relaxed">
               <p>
-                <strong className="text-[#111111]">One Pack</strong> is a premier wholesale supplier of premium eco-friendly food packaging solutions based in Kasaragod, Kerala. We supply sustainable, high-performance disposable tableware to restaurants, hotels, cafes, bakeries, juice shops, caterers, and retail distributors across the region.
+                <strong className="text-[#111111]">One Pack</strong> is a premier wholesale supplier of 100% biodegradable and eco-friendly food packaging solutions located at <strong className="text-[#111111]">3rd floor, Brothers Traders, Railway Station road, Kanhangad, Kasaragod, Kerala - 671315</strong> (GSTIN: <strong className="text-[#C89A2B]">32AALFB1621M1ZN</strong>).
               </p>
               <p>
-                Our mission is to lead the food service industry away from environmentally harmful plastics by offering cost-effective, aesthetically pleasing, and 100% compostable alternatives crafted from natural sugarcane bagasse, birchwood, and FSC-certified virgin food paper.
+                We strictly sell <strong className="text-[#111111]">100% Bio Products — No Plastic</strong>. Our mission is to empower restaurants, hotels, cafes, bakeries, juice shops, caterers, and wholesale distributors across Kasaragod with food-grade, certified compostable tableware and containers.
               </p>
             </div>
 

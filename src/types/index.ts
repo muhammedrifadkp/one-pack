@@ -56,6 +56,9 @@ export interface SiteConfig {
   email: string;
   address: string;
   cityState: string;
+  gstin?: string;
+  deliveryArea?: string;
+  bioNotice?: string;
   googleMapEmbedUrl: string;
   cataloguePdfUrl: string;
   workingHours: string;

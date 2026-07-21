@@ -19,9 +19,9 @@ const plusJakarta = Plus_Jakarta_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "One Pack | Premium Eco Disposable B2B Packaging Solutions",
-  description: "One Source. Every Pack. Leading wholesale supplier of biodegradable food packaging, paper cups, bio plates, wooden cutlery, meal boxes, and carry bags in Kasaragod, Kerala.",
-  keywords: ["one pack", "bio packaging", "food packaging Kasaragod", "eco disposable tableware", "paper plates wholesale", "wooden cutlery Kerala"],
+  title: "One Pack | Premium Bio Disposable & Packaging Solutions Kanhangad",
+  description: "One Source. Every Pack. Leading wholesale supplier of 100% biodegradable food packaging in Kanhangad, Kasaragod. We only sell bio products - No Plastic. Call: +91 99952 16808 | WhatsApp: +91 90199 66790. GSTIN: 32AALFB1621M1ZN.",
+  keywords: ["one pack", "bio packaging Kanhangad", "food packaging Kasaragod", "eco disposable tableware", "paper plates wholesale", "wooden cutlery Kerala", "GSTIN 32AALFB1621M1ZN"],
   icons: {
     icon: [
       { url: "/favicon.ico", sizes: "any" },
@@ -32,8 +32,8 @@ export const metadata: Metadata = {
     apple: "/apple-touch-icon.png",
   },
   openGraph: {
-    title: "One Pack | Premium Eco Disposable B2B Packaging",
-    description: "One Source. Every Pack. Bio eco-friendly disposable packaging for restaurants, cafes, hotels & caterers.",
+    title: "One Pack | Premium Bio Disposable & Packaging Solutions",
+    description: "One Source. Every Pack. We only sell bio products - No plastic. Delivery all over Kasaragod.",
     url: "https://onepackonline.com",
     siteName: "One Pack Eco Packaging",
     type: "website"
@@ -57,16 +57,17 @@ export default function RootLayout({
               "@type": "WholesaleStore",
               "name": "One Pack Eco Packaging",
               "image": "https://images.unsplash.com/photo-1577705998148-6da4f3963bc8",
-              "description": "Premium bio disposable packaging solutions for restaurants, hotels, cafes, bakeries, juice shops, and caterers.",
+              "description": "Premium bio disposable packaging solutions for restaurants, hotels, cafes, bakeries, juice shops, and caterers. We only sell bio products - No plastic.",
               "address": {
                 "@type": "PostalAddress",
-                "streetAddress": "NH 66, Opp. Municipal Complex",
-                "addressLocality": "Kasaragod",
+                "streetAddress": "3rd floor, Brothers Traders, Railway Station road",
+                "addressLocality": "Kanhangad",
                 "addressRegion": "Kerala",
-                "postalCode": "671121",
+                "postalCode": "671315",
                 "addressCountry": "IN"
               },
               "telephone": "+919995216808",
+              "vatID": "32AALFB1621M1ZN",
               "priceRange": "₹"
             })
           }}
