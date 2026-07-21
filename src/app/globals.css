@@ -1,26 +1,78 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --primary: #C89A2B;
+    --primary-hover: #B38822;
+    --primary-light: #FDF7EA;
+    --secondary: #222222;
+    --accent-light: #F8F8F8;
+    --background: #FFFFFF;
+    --foreground: #1F2937;
+    --muted: #6B7280;
+    --border: #E5E7EB;
   }
 }
 
+@theme {
+  --color-primary: #C89A2B;
+  --color-primary-hover: #B38822;
+  --color-primary-light: #FDF7EA;
+  --color-secondary: #222222;
+  --color-accent-light: #F8F8F8;
+  --color-dark-gray: #1F2937;
+  --color-border-custom: #E5E7EB;
+
+  --font-sans: var(--font-inter), system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-heading: var(--font-plus-jakarta), var(--font-sans);
+
+  --shadow-premium: 0 10px 30px -10px rgba(0, 0, 0, 0.05), 0 4px 12px -2px rgba(0, 0, 0, 0.02);
+  --shadow-premium-hover: 0 20px 40px -15px rgba(200, 154, 43, 0.15), 0 8px 24px -4px rgba(0, 0, 0, 0.06);
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: #ffffff;
+  color: #1F2937;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: #ffffff;
+  color: #1F2937;
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #f8f8f8;
+}
+::-webkit-scrollbar-thumb {
+  background: #c89a2b;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #b38822;
+}
+
+/* Glassmorphism utils */
+.glass-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(229, 231, 235, 0.6);
+}
+
+.gold-gradient-bg {
+  background: linear-gradient(135deg, #FDF7EA 0%, #FAF0D6 100%);
+}
+
+.gold-text-gradient {
+  background: linear-gradient(135deg, #C89A2B 0%, #A67C1E 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
