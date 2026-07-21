@@ -22,6 +22,15 @@ export const metadata: Metadata = {
   title: "One Pack | Premium Eco Disposable B2B Packaging Solutions",
   description: "One Source. Every Pack. Leading wholesale supplier of biodegradable food packaging, paper cups, bio plates, wooden cutlery, meal boxes, and carry bags in Kasaragod, Kerala.",
   keywords: ["one pack", "bio packaging", "food packaging Kasaragod", "eco disposable tableware", "paper plates wholesale", "wooden cutlery Kerala"],
+  icons: {
+    icon: [
+      { url: "/favicon.ico", sizes: "any" },
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon.png", type: "image/png", sizes: "512x512" },
+    ],
+    shortcut: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
   openGraph: {
     title: "One Pack | Premium Eco Disposable B2B Packaging",
     description: "One Source. Every Pack. Bio eco-friendly disposable packaging for restaurants, cafes, hotels & caterers.",

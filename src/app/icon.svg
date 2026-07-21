@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient -->
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1F1F1F"/>
+      <stop offset="100%" stop-color="#0F0F0F"/>
+    </linearGradient>
+
+    <!-- Gold Gradient for Top Box Face -->
+    <linearGradient id="goldGradTop" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2C965"/>
+      <stop offset="100%" stop-color="#C89A2B"/>
+    </linearGradient>
+
+    <!-- Gold Gradient for Main Right Face -->
+    <linearGradient id="goldGradRight" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#D9A835"/>
+      <stop offset="100%" stop-color="#B0831F"/>
+    </linearGradient>
+
+    <!-- Leaf Accent Gradient -->
+    <linearGradient id="leafGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2D5A27"/>
+      <stop offset="50%" stop-color="#4CAF50"/>
+      <stop offset="100%" stop-color="#81C784"/>
+    </linearGradient>
+
+    <!-- Gold Glow Filter -->
+    <filter id="goldGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="8" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Background Squircle with Gold Stroke -->
+  <rect x="10" y="10" width="492" height="492" rx="105" fill="url(#bgGrad)" stroke="#C89A2B" stroke-width="10"/>
+  
+  <!-- Inner Frame Accent -->
+  <rect x="22" y="22" width="468" height="468" rx="93" fill="none" stroke="#C89A2B" stroke-width="2" stroke-opacity="0.35"/>
+
+  <!-- Scaled-Up 3D Open Package Box & "1" Monogram Group (Scaled 1.45x) -->
+  <g transform="translate(256, 256) scale(1.42) translate(-256, -215)">
+    
+    <!-- Top Left Flap -->
+    <polygon points="161,190 256,140 211,90 126,150" fill="#D7A830" />
+    
+    <!-- Top Right Flap (With Eco Leaf Motif) -->
+    <polygon points="256,140 351,190 386,150 301,90" fill="#F0C350" />
+    
+    <!-- Eco Leaf Emblem on Right Flap -->
+    <path d="M 310,105 Q 350,110 355,145 Q 325,145 310,105 Z" fill="url(#leafGrad)" />
+    <path d="M 312,108 Q 330,125 348,138" stroke="#FFFFFF" stroke-width="2.5" fill="none" opacity="0.8"/>
+
+    <!-- Inner Shadow of Open Box -->
+    <polygon points="256,150 331,190 256,230 181,190" fill="#825F0F" />
+
+    <!-- Isometric Top Face Rim -->
+    <polygon points="256,140 351,190 256,240 161,190" fill="url(#goldGradTop)" opacity="0.95" />
+
+    <!-- Left Box Outer Wall (Darker Tone) -->
+    <polygon points="161,190 256,240 256,345 161,295" fill="#9E7418" />
+
+    <!-- Right Box Outer Wall (Primary Gold Tone) -->
+    <polygon points="256,240 351,190 351,295 256,345" fill="url(#goldGradRight)" />
+
+    <!-- Front Box Fold Line Highlight -->
+    <line x1="256" y1="240" x2="256" y2="345" stroke="#FCE69C" stroke-width="3.5" opacity="0.6"/>
+
+    <!-- Stylized "1" Monogram on Box Front -->
+    <g filter="url(#goldGlow)">
+      <!-- Number 1 Stem -->
+      <polygon points="236,205 261,190 272,190 272,295 240,295 240,220" fill="#FFFFFF" />
+      <!-- Number 1 Base -->
+      <rect x="224" y="283" width="64" height="15" rx="3.5" fill="#FFFFFF" />
+    </g>
+
+    <!-- Bottom Indicator Dots (Decorative Brand Element) -->
+    <circle cx="216" cy="375" r="7" fill="#C89A2B" />
+    <circle cx="256" cy="375" r="8" fill="#FFFFFF" />
+    <circle cx="296" cy="375" r="7" fill="#C89A2B" />
+  </g>
+</svg>
