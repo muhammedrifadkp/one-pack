@@ -107,8 +107,18 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.products) && data.products.length > 0) {
-          setProducts(data.products);
-          localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(data.products));
+          setProducts((currentProds) => {
+            // Build a map to merge server data with local browser additions
+            const map = new Map<string, Product>();
+            // Add server products first
+            data.products.forEach((p: Product) => map.set(p.id, p));
+            // Preserve/override with current local products (prevents overwriting local additions if server runs in fallback)
+            currentProds.forEach((p: Product) => map.set(p.id, p));
+
+            const mergedList = Array.from(map.values());
+            localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(mergedList));
+            return mergedList;
+          });
         }
       })
       .catch((err) => {
@@ -219,27 +229,33 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       const data = await res.json();
+      let created: Product;
       if (res.ok && data.success && data.product) {
-        const updatedList = [data.product, ...products.filter((p) => p.id !== data.product.id)];
-        saveProducts(updatedList);
-        return { success: true, product: data.product };
+        created = data.product;
+      } else {
+        created = {
+          ...prodData,
+          id: `prod-${Date.now()}`
+        };
       }
 
-      // Fallback local state add if server fails or unconfigured
-      const newProd: Product = {
-        ...prodData,
-        id: `prod-${Date.now()}`
-      };
-      const updatedList = [newProd, ...products];
-      saveProducts(updatedList);
-      return { success: true, product: newProd };
+      setProducts((prev) => {
+        const updatedList = [created, ...prev.filter((p) => p.id !== created.id)];
+        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
+        return updatedList;
+      });
+
+      return { success: true, product: created };
     } catch (err: any) {
       const newProd: Product = {
         ...prodData,
         id: `prod-${Date.now()}`
       };
-      const updatedList = [newProd, ...products];
-      saveProducts(updatedList);
+      setProducts((prev) => {
+        const updatedList = [newProd, ...prev.filter((p) => p.id !== newProd.id)];
+        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
+        return updatedList;
+      });
       return { success: true, product: newProd };
     }
   };
@@ -256,48 +272,51 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       const data = await res.json();
+      let updated: Product | undefined;
       if (res.ok && data.success && data.product) {
-        const updatedList = products.map((p) => (p.id === id ? data.product : p));
-        saveProducts(updatedList);
-        return { success: true, product: data.product };
+        updated = data.product;
       }
 
-      // Fallback local state update
-      const updatedList = products.map((p) => (p.id === id ? { ...p, ...prodData } : p));
-      saveProducts(updatedList);
-      return { success: true, product: updatedList.find((p) => p.id === id) };
+      setProducts((prev) => {
+        const updatedList = prev.map((p) => {
+          if (p.id === id) {
+            return updated || { ...p, ...prodData };
+          }
+          return p;
+        });
+        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
+        return updatedList;
+      });
+
+      return { success: true, product: updated };
     } catch (err: any) {
-      const updatedList = products.map((p) => (p.id === id ? { ...p, ...prodData } : p));
-      saveProducts(updatedList);
-      return { success: true, product: updatedList.find((p) => p.id === id) };
+      setProducts((prev) => {
+        const updatedList = prev.map((p) => (p.id === id ? { ...p, ...prodData } : p));
+        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
+        return updatedList;
+      });
+      return { success: true };
     }
   };
 
   const deleteProduct = async (id: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      await fetch(`/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "x-admin-key": adminKey
         }
       });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        const updatedList = products.filter((p) => p.id !== id);
-        saveProducts(updatedList);
-        return { success: true };
-      }
-
-      // Fallback local state delete
-      const updatedList = products.filter((p) => p.id !== id);
-      saveProducts(updatedList);
-      return { success: true };
-    } catch (err: any) {
-      const updatedList = products.filter((p) => p.id !== id);
-      saveProducts(updatedList);
-      return { success: true };
+    } catch (err) {
+      console.warn("Server delete call failed, removing locally", err);
     }
+
+    setProducts((prev) => {
+      const updatedList = prev.filter((p) => p.id !== id);
+      localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
+      return updatedList;
+    });
+    return { success: true };
   };
 
   const addCategory = (catData: Omit<Category, "id">) => {
