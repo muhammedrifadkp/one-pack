@@ -2,10 +2,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminAuth } from "@/lib/adminAuth";
 import { getProductsFromStore, addProductToStore } from "@/lib/productsStore";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   try {
     const products = await getProductsFromStore();
-    return NextResponse.json({ success: true, products });
+    return NextResponse.json(
+      { success: true, products },
+      {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate"
+        }
+      }
+    );
   } catch (error: any) {
     return NextResponse.json(
       { success: false, error: error.message || "Failed to fetch products" },

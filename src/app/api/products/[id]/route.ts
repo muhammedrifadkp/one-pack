@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyAdminAuth } from "@/lib/adminAuth";
 import { updateProductInStore, deleteProductFromStore } from "@/lib/productsStore";
 
+export const dynamic = "force-dynamic";
+
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const auth = verifyAdminAuth(req);
   if (!auth.authorized) {
