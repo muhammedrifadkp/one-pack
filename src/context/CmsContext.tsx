@@ -57,6 +57,7 @@ const LOCAL_STORAGE_KEY_CONFIG = "onepack_site_config_v2";
 const LOCAL_STORAGE_KEY_SEO = "onepack_seo_config_v1";
 const LOCAL_STORAGE_KEY_PRODUCTS = "onepack_products_v23";
 const LOCAL_STORAGE_KEY_DELETED_PRODUCTS = "onepack_deleted_products_v2";
+const LOCAL_STORAGE_KEY_CUSTOM_PRODUCTS = "onepack_custom_products_v2";
 const LOCAL_STORAGE_KEY_CATEGORIES = "onepack_categories_v21";
 const LOCAL_STORAGE_KEY_BRANDS = "onepack_brands_v1";
 const LOCAL_STORAGE_KEY_TESTIMONIALS = "onepack_testimonials_v1";
@@ -72,6 +73,38 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const [adminKey, setAdminKey] = useState<string>("");
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+
+  // Helper to get custom locally created products
+  const getCustomProductsFromStorage = (): Product[] => {
+    try {
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY_CUSTOM_PRODUCTS);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  };
+
+  // Helper to save custom created products
+  const saveCustomProductToStorage = (prod: Product) => {
+    try {
+      const existing = getCustomProductsFromStorage();
+      const updated = [prod, ...existing.filter((p) => p.id !== prod.id)];
+      localStorage.setItem(LOCAL_STORAGE_KEY_CUSTOM_PRODUCTS, JSON.stringify(updated));
+    } catch (e) {
+      console.error("Failed to save custom product to local storage:", e);
+    }
+  };
+
+  // Helper to remove custom product
+  const removeCustomProductFromStorage = (id: string) => {
+    try {
+      const existing = getCustomProductsFromStorage();
+      const updated = existing.filter((p) => p.id !== id);
+      localStorage.setItem(LOCAL_STORAGE_KEY_CUSTOM_PRODUCTS, JSON.stringify(updated));
+    } catch (e) {
+      console.error("Failed to remove custom product from local storage:", e);
+    }
+  };
 
   // Load from Local & Session Storage on mount, and sync products from backend Supabase API
   useEffect(() => {
@@ -100,19 +133,27 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error("Failed to load CMS data from storage", e);
     }
 
-    // Fetch initial products from backend Supabase API & filter deleted IDs
+    // Fetch initial products from backend Supabase API & merge custom added products
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && Array.isArray(data.products)) {
-          try {
-            const deletedIdsRaw = localStorage.getItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
-            const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
-            const activeProducts = data.products.filter((p: Product) => !deletedIds.includes(p.id));
-            setProducts(activeProducts);
-          } catch (e) {
-            setProducts(data.products);
-          }
+        const serverProducts = data.success && Array.isArray(data.products) ? data.products : [];
+        const customProducts = getCustomProductsFromStorage();
+
+        // Combine server products and custom local added products (deduplicating by id)
+        const combinedMap = new Map<string, Product>();
+        serverProducts.forEach((p: Product) => combinedMap.set(p.id, p));
+        customProducts.forEach((p: Product) => combinedMap.set(p.id, p));
+
+        const combinedList = Array.from(combinedMap.values());
+
+        try {
+          const deletedIdsRaw = localStorage.getItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
+          const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
+          const activeProducts = combinedList.filter((p: Product) => !deletedIds.includes(p.id));
+          setProducts(activeProducts);
+        } catch (e) {
+          setProducts(combinedList);
         }
       })
       .catch((err) => {
@@ -220,6 +261,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const data = await res.json();
       if (res.ok && data.success && data.product) {
         const created = data.product;
+        saveCustomProductToStorage(created);
         setProducts((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
         return { success: true, product: created };
       }
@@ -243,6 +285,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       const data = await res.json();
       if (res.ok && data.success && data.product) {
         const updated = data.product;
+        saveCustomProductToStorage(updated);
         setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
         return { success: true, product: updated };
       }
@@ -265,6 +308,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
 
     try {
+      removeCustomProductFromStorage(id);
       const deletedIdsRaw = localStorage.getItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
       const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
       if (!deletedIds.includes(id)) {
