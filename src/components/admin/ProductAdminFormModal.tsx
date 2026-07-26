@@ -93,6 +93,55 @@ export const ProductAdminFormModal: React.FC<ProductAdminFormModalProps> = ({
     }
   };
 
+  // Helper to compress image files on client browser before upload
+  const compressImageFile = async (file: File, maxWidth = 1000, quality = 0.8): Promise<File> => {
+    return new Promise((resolve) => {
+      if (file.type.includes("svg") || file.size < 200000) {
+        return resolve(file);
+      }
+      const img = new Image();
+      const url = URL.createObjectURL(file);
+      img.onload = () => {
+        URL.revokeObjectURL(url);
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxWidth) {
+          height = Math.round((height * maxWidth) / width);
+          width = maxWidth;
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(img, 0, 0, width, height);
+          canvas.toBlob(
+            (blob) => {
+              if (blob) {
+                const compressedFile = new File([blob], file.name.replace(/\.[^/.]+$/, ".webp"), {
+                  type: "image/webp",
+                  lastModified: Date.now()
+                });
+                resolve(compressedFile);
+              } else {
+                resolve(file);
+              }
+            },
+            "image/webp",
+            quality
+          );
+        } else {
+          resolve(file);
+        }
+      };
+      img.onerror = () => resolve(file);
+      img.src = url;
+    });
+  };
+
   const handleMainFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -100,7 +149,8 @@ export const ProductAdminFormModal: React.FC<ProductAdminFormModalProps> = ({
     setUploadingMain(true);
     setErrorMsg("");
 
-    const res = await uploadImage(file);
+    const compressed = await compressImageFile(file);
+    const res = await uploadImage(compressed);
     setUploadingMain(false);
 
     if (res.success && res.url) {
@@ -122,7 +172,8 @@ export const ProductAdminFormModal: React.FC<ProductAdminFormModalProps> = ({
 
     const uploadedUrls: string[] = [];
     for (let i = 0; i < files.length; i++) {
-      const res = await uploadImage(files[i]);
+      const compressed = await compressImageFile(files[i]);
+      const res = await uploadImage(compressed);
       if (res.success && res.url) {
         uploadedUrls.push(res.url);
       }
