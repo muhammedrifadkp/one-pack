@@ -12,14 +12,27 @@ export const Navbar: React.FC = () => {
   const pathname = usePathname();
   const { siteConfig, generateWhatsAppUrl, categories } = useCms();
   const [isScrolled, setIsScrolled] = useState(false);
+  const [showTopBar, setShowTopBar] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [productsDropdownOpen, setProductsDropdownOpen] = useState(false);
 
   useEffect(() => {
+    let lastScrollY = window.scrollY;
+
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+      const currentScrollY = window.scrollY;
+      setIsScrolled(currentScrollY > 20);
+
+      if (currentScrollY > lastScrollY && currentScrollY > 30) {
+        setShowTopBar(false);
+      } else if (currentScrollY < lastScrollY || currentScrollY <= 10) {
+        setShowTopBar(true);
+      }
+
+      lastScrollY = Math.max(0, currentScrollY);
     };
-    window.addEventListener("scroll", handleScroll);
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
@@ -37,22 +50,28 @@ export const Navbar: React.FC = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50">
-      {/* Top Company Info Bar */}
-      <div className="bg-[#122E1F] text-white text-[11px] font-medium py-1.5 px-4 border-b border-emerald-900/40">
-        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
-          <div className="flex items-center gap-4">
-            <span className="inline-flex items-center gap-1 text-[#E6C673] font-bold">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#E6C673]" />
+      {/* Top Company Info Bar - hides smoothly on scroll down */}
+      <div
+        className={`bg-[#122E1F] text-white transition-all duration-300 ease-in-out overflow-hidden ${
+          showTopBar
+            ? "max-h-12 opacity-100 py-1.5 border-b border-emerald-900/40"
+            : "max-h-0 opacity-0 py-0 border-b-0"
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 flex items-center justify-between gap-2 text-[10px] sm:text-[11px] font-medium">
+          <div className="flex items-center gap-2 sm:gap-4 overflow-hidden">
+            <span className="inline-flex items-center gap-1 text-[#E6C673] font-bold truncate">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#E6C673] shrink-0" />
               WE ONLY SELL BIO PRODUCTS - NO PLASTIC
             </span>
             <span className="hidden md:inline-block text-emerald-700">|</span>
-            <span className="hidden md:inline-flex items-center gap-1 text-emerald-200">
-              <Truck className="w-3.5 h-3.5 text-[#E6C673]" />
+            <span className="hidden lg:inline-flex items-center gap-1 text-emerald-200">
+              <Truck className="w-3.5 h-3.5 text-[#E6C673] shrink-0" />
               DELIVERY ALL OVER KASARAGOD
             </span>
           </div>
 
-          <div className="flex items-center gap-4 ml-auto">
+          <div className="hidden sm:flex items-center gap-3 sm:gap-4 ml-auto shrink-0">
             <a
               href={`tel:${siteConfig.phoneNumber.replace(/[^0-9+]/g, "")}`}
               className="inline-flex items-center gap-1 hover:text-[#E6C673] transition-colors"
@@ -222,7 +241,7 @@ export const Navbar: React.FC = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-b border-gray-200 overflow-hidden shadow-xl"
+            className="md:hidden bg-white border-b border-gray-200 overflow-y-auto max-h-[85vh] shadow-xl"
           >
             <div className="px-5 py-6 space-y-4">
               {navLinks.map((link) => {

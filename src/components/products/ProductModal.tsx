@@ -41,26 +41,26 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
 
   return (
     <AnimatePresence>
-      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6">
+      <div className="fixed inset-0 z-50 overflow-y-auto bg-black/60 backdrop-blur-xs flex items-center justify-center p-2.5 sm:p-6">
         <motion.div
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
           transition={{ duration: 0.2 }}
-          className="bg-white rounded-3xl shadow-2xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col relative border border-gray-100"
+          className="bg-white rounded-2xl sm:rounded-3xl shadow-2xl max-w-4xl w-full max-h-[92vh] overflow-hidden flex flex-col relative border border-gray-100"
         >
           {/* Header Close Bar */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-white sticky top-0 z-20">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-[#C89A2B] uppercase tracking-wider">
+          <div className="flex items-center justify-between px-4 sm:px-6 py-3 sm:py-4 border-b border-gray-100 bg-white sticky top-0 z-20">
+            <div className="flex items-center gap-1.5 sm:gap-2">
+              <span className="text-[11px] sm:text-xs font-bold text-[#C89A2B] uppercase tracking-wider">
                 {product.categoryName}
               </span>
               <span className="text-gray-300">•</span>
-              <span className="text-xs text-gray-500 font-medium">B2B Wholesale Item</span>
+              <span className="text-[10px] sm:text-xs text-gray-500 font-medium">B2B Wholesale</span>
             </div>
             <button
               onClick={onClose}
-              className="p-2 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              className="p-1.5 sm:p-2 text-gray-400 hover:text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
               aria-label="Close modal"
             >
               <X className="w-5 h-5" />
@@ -68,8 +68,8 @@ export const ProductModal: React.FC<ProductModalProps> = ({ product, isOpen, onC
           </div>
 
           {/* Modal Main Content Scroll Area */}
-          <div className="overflow-y-auto p-6 space-y-8 flex-1">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="overflow-y-auto p-4 sm:p-6 space-y-6 sm:space-y-8 flex-1">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
               
               {/* Left Column: Image Gallery & Zoom */}
               <div className="space-y-4">

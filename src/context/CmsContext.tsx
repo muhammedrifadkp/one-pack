@@ -45,10 +45,10 @@ interface CmsContextType {
 
 const CmsContext = createContext<CmsContextType | undefined>(undefined);
 
-const LOCAL_STORAGE_KEY_CONFIG = "onepack_site_config_v1";
+const LOCAL_STORAGE_KEY_CONFIG = "onepack_site_config_v2";
 const LOCAL_STORAGE_KEY_SEO = "onepack_seo_config_v1";
-const LOCAL_STORAGE_KEY_PRODUCTS = "onepack_products_v1";
-const LOCAL_STORAGE_KEY_CATEGORIES = "onepack_categories_v1";
+const LOCAL_STORAGE_KEY_PRODUCTS = "onepack_products_v23";
+const LOCAL_STORAGE_KEY_CATEGORIES = "onepack_categories_v21";
 const LOCAL_STORAGE_KEY_BRANDS = "onepack_brands_v1";
 const LOCAL_STORAGE_KEY_TESTIMONIALS = "onepack_testimonials_v1";
 
@@ -64,7 +64,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   useEffect(() => {
     try {
       const savedConfig = localStorage.getItem(LOCAL_STORAGE_KEY_CONFIG);
-      if (savedConfig) setSiteConfig(JSON.parse(savedConfig));
+      if (savedConfig) setSiteConfig({ ...INITIAL_SITE_CONFIG, ...JSON.parse(savedConfig) });
 
       const savedSeo = localStorage.getItem(LOCAL_STORAGE_KEY_SEO);
       if (savedSeo) setSeoConfig(JSON.parse(savedSeo));

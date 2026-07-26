@@ -59,6 +59,7 @@ export default function RootLayout({
                 "addressCountry": "IN"
               },
               "telephone": "+919995216808",
+              "email": "onepackonline@gmail.com",
               "vatID": "32AALFB1621M1ZN",
               "priceRange": "₹"
             })
@@ -68,7 +69,7 @@ export default function RootLayout({
       <body className="bg-white text-gray-800 flex flex-col min-h-screen">
         <CmsProvider>
           <Navbar />
-          <main className="flex-1 pt-16 sm:pt-20">{children}</main>
+          <main className="flex-1 pt-24 sm:pt-28 md:pt-32">{children}</main>
           <Footer />
           <WhatsAppButton />
         </CmsProvider>

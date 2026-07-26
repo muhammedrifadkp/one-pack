@@ -45,12 +45,12 @@ export default function AboutPage() {
     <div className="space-y-20 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#FAF7F0] border-b border-[#F3E2B8] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
+      <section className="bg-[#FAF7F0] border-b border-[#F3E2B8] py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
           <span className="text-xs font-bold text-[#C89A2B] uppercase tracking-widest">
             ABOUT ONE PACK
           </span>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#222222] font-heading">
+          <h1 className="text-3xl sm:text-5xl font-black text-[#222222] font-heading">
             Pioneering Sustainable Food Packaging
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -61,14 +61,14 @@ export default function AboutPage() {
 
       {/* Main Story & Image Section */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
           
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="lg:col-span-6 space-y-6"
+            className="lg:col-span-6 space-y-5 sm:space-y-6"
           >
             <div className="inline-flex items-center gap-2 bg-[#FDF7EA] border border-[#F3E2B8] px-4 py-1.5 rounded-full shadow-2xs">
               <Sparkles className="w-3.5 h-3.5 text-[#C89A2B]" />
@@ -77,7 +77,7 @@ export default function AboutPage() {
               </span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-black text-[#111111] font-heading leading-[1.18] tracking-tight">
+            <h2 className="text-2xl sm:text-4xl font-black text-[#111111] font-heading leading-[1.18] tracking-tight">
               Replacing Single-Use Plastics with Certified Bio Alternatives
             </h2>
 
@@ -110,19 +110,19 @@ export default function AboutPage() {
               </div>
             </div>
 
-            <div className="pt-3 flex flex-wrap items-center gap-4">
+            <div className="pt-3 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
               <a
                 href={aboutWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs font-bold uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all inline-flex items-center gap-2"
+                className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs font-bold uppercase tracking-wider px-7 py-3.5 rounded-xl shadow-md hover:shadow-lg transition-all inline-flex items-center justify-center gap-2 w-full sm:w-auto"
               >
                 <MessageCircle className="w-4 h-4" />
                 Contact Our Team
               </a>
               <Link
                 href="/products"
-                className="border border-gray-200 hover:border-[#C89A2B] text-gray-700 hover:text-[#C89A2B] text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-xl transition-colors"
+                className="border border-gray-200 hover:border-[#C89A2B] text-gray-700 hover:text-[#C89A2B] text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-xl transition-colors text-center inline-flex items-center justify-center w-full sm:w-auto"
               >
                 Browse Catalogue
               </Link>

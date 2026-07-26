@@ -50,13 +50,13 @@ I would like to enquire about your products.`;
     <div className="space-y-16 pb-20">
       
       {/* Header Banner */}
-      <section className="bg-[#FAF7F0] border-b border-[#F3E2B8] py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-4">
-          <div className="inline-flex items-center gap-2 bg-[#122E1F] text-white px-4 py-1.5 rounded-full text-xs font-bold tracking-wider">
-            <ShieldCheck className="w-4 h-4 text-[#E6C673]" />
-            <span>WE ONLY SELL BIO PRODUCTS - NO PLASTIC</span>
+      <section className="bg-[#FAF7F0] border-b border-[#F3E2B8] py-10 sm:py-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-3 sm:space-y-4">
+          <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#122E1F] text-white px-3 sm:px-4 py-1.5 rounded-full text-[10px] sm:text-xs font-bold tracking-wider max-w-full">
+            <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E6C673] shrink-0" />
+            <span className="truncate">WE ONLY SELL BIO PRODUCTS - NO PLASTIC</span>
           </div>
-          <h1 className="text-4xl sm:text-5xl font-black text-[#222222] font-heading">
+          <h1 className="text-3xl sm:text-5xl font-black text-[#222222] font-heading">
             Contact One Pack
           </h1>
           <p className="text-xs sm:text-sm text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -112,6 +112,22 @@ I would like to enquire about your products.`;
                     className="text-sm font-bold text-[#25D366] hover:underline mt-0.5 block"
                   >
                     {siteConfig.secondaryPhone || "+91 90199 66790"}
+                  </a>
+                </div>
+              </div>
+
+              {/* Email Address */}
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-[#FDF7EA] text-[#C89A2B] flex items-center justify-center shrink-0">
+                  <Mail className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Email Address</h4>
+                  <a
+                    href={`mailto:${siteConfig.email}`}
+                    className="text-sm font-bold text-[#222222] hover:text-[#C89A2B] mt-0.5 block"
+                  >
+                    {siteConfig.email}
                   </a>
                 </div>
               </div>

@@ -128,19 +128,10 @@ function ProductsContent() {
         <main className="lg:col-span-9 space-y-6">
           
           {/* Controls Bar (Search Box + Sort Dropdown) */}
-          <div className="bg-white p-4 rounded-xl border border-gray-200/80 shadow-2xs flex flex-wrap items-center justify-between gap-4">
+          <div className="bg-white p-3.5 sm:p-4 rounded-xl border border-gray-200/80 shadow-2xs flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
             
-            {/* Mobile Filter Drawer Button */}
-            <button
-              onClick={() => setMobileFilterOpen(true)}
-              className="lg:hidden flex items-center gap-2 bg-[#FDF7EA] text-[#C89A2B] font-bold text-xs px-4 py-2.5 rounded-xl border border-[#F3E2B8]"
-            >
-              <SlidersHorizontal className="w-4 h-4" />
-              Categories ({selectedCategory === "all" ? "All" : activeCategoryObj?.name})
-            </button>
-
-            {/* Search Input Box matching reference image */}
-            <div className="flex-1 min-w-[220px] relative">
+            {/* Search Input Box */}
+            <div className="flex-1 w-full relative order-1 sm:order-2">
               <Search className="w-4 h-4 text-gray-400 absolute left-3.5 top-3" />
               <input
                 type="text"
@@ -159,25 +150,36 @@ function ProductsContent() {
               )}
             </div>
 
-            {/* Sort Dropdown matching reference image */}
-            <div className="flex items-center gap-2 text-xs">
-              <span className="text-gray-500 font-bold whitespace-nowrap">Sort by</span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="bg-white border border-gray-200 font-bold text-gray-800 py-2.5 px-3 rounded-xl focus:outline-none focus:border-[#C89A2B] cursor-pointer"
+            <div className="flex items-center gap-2 order-2 sm:order-1">
+              {/* Mobile Filter Drawer Button */}
+              <button
+                onClick={() => setMobileFilterOpen(true)}
+                className="lg:hidden flex-1 sm:flex-none flex items-center justify-center gap-2 bg-[#FDF7EA] text-[#C89A2B] font-bold text-xs px-3.5 py-2.5 rounded-xl border border-[#F3E2B8] shrink-0 truncate"
               >
-                <option value="featured">Featured</option>
-                <option value="name-asc">Name (A - Z)</option>
-                <option value="name-desc">Name (Z - A)</option>
-              </select>
+                <SlidersHorizontal className="w-4 h-4 shrink-0" />
+                <span className="truncate">Category ({selectedCategory === "all" ? "All" : activeCategoryObj?.name})</span>
+              </button>
+
+              {/* Sort Dropdown */}
+              <div className="flex items-center gap-1.5 text-xs shrink-0">
+                <span className="text-gray-500 font-bold whitespace-nowrap hidden xs:inline">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value as any)}
+                  className="bg-white border border-gray-200 font-bold text-gray-800 py-2.5 px-2.5 sm:px-3 rounded-xl focus:outline-none focus:border-[#C89A2B] cursor-pointer text-xs"
+                >
+                  <option value="featured">Featured</option>
+                  <option value="name-asc">A - Z</option>
+                  <option value="name-desc">Z - A</option>
+                </select>
+              </div>
             </div>
 
           </div>
 
-          {/* Products Grid (3 Columns on Desktop matching reference image) */}
+          {/* Products Grid (2 Columns on Mobile, 3 Columns on Desktop) */}
           {filteredProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
               {filteredProducts.map((prod, idx) => {
                 const productWhatsAppUrl = generateWhatsAppUrl({
                   productName: prod.name,

@@ -141,7 +141,9 @@ export const Footer: React.FC = () => {
               </li>
               <li className="flex items-center gap-2.5">
                 <Mail className="w-4 h-4 text-[#C89A2B] shrink-0" />
-                <span>{siteConfig.email}</span>
+                <a href={`mailto:${siteConfig.email}`} className="hover:text-[#C89A2B] transition-colors">
+                  {siteConfig.email}
+                </a>
               </li>
               <li className="flex items-start gap-2.5">
                 <MapPin className="w-4 h-4 text-[#C89A2B] shrink-0 mt-0.5" />

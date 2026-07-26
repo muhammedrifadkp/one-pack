@@ -158,32 +158,32 @@ export default function HomePage() {
               initial={{ opacity: 0, x: -25 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
-              className="lg:col-span-5 space-y-6 lg:py-2"
+              className="lg:col-span-5 space-y-5 sm:space-y-6 lg:py-2"
             >
-              <div className="inline-flex items-center gap-2 bg-[#122E1F] text-white px-3.5 py-1.5 rounded-full text-[11px] font-bold tracking-wider">
-                <ShieldCheck className="w-4 h-4 text-[#E6C673]" />
-                <span>WE ONLY SELL BIO PRODUCTS — NO PLASTIC</span>
+              <div className="inline-flex items-center gap-1.5 sm:gap-2 bg-[#122E1F] text-white px-3 sm:px-3.5 py-1.5 rounded-full text-[10px] sm:text-[11px] font-bold tracking-wider max-w-full">
+                <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#E6C673] shrink-0" />
+                <span className="truncate">WE ONLY SELL BIO PRODUCTS — NO PLASTIC</span>
               </div>
 
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-[1.12]">
+              <h1 className="text-3xl xs:text-4xl sm:text-5xl lg:text-6xl font-black font-heading tracking-tight leading-[1.12]">
                 <span className="text-[#111111] block">One Source.</span>
                 <span className="text-[#C89A2B] block mt-1">Every Pack.</span>
               </h1>
 
-              <p className="text-base sm:text-lg text-gray-800 font-medium leading-relaxed max-w-md">
+              <p className="text-sm sm:text-lg text-gray-800 font-medium leading-relaxed max-w-md">
                 Premium bio disposable packaging solutions for your business.
               </p>
 
-              <div className="text-sm sm:text-base text-gray-700 font-normal leading-relaxed space-y-1">
+              <div className="text-xs sm:text-base text-gray-700 font-normal leading-relaxed space-y-1">
                 <p>Restaurants. Hotels. Cafés. Bakeries.</p>
                 <p>Juice Shops. Catering & More.</p>
               </div>
 
               {/* Action CTA Buttons */}
-              <div className="pt-2 flex flex-row items-center gap-3">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full sm:w-auto">
                 <Link
                   href="/products"
-                  className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-lg shadow-xs transition-colors text-center inline-flex items-center justify-center"
+                  className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs font-bold uppercase tracking-wider px-6 py-3.5 rounded-xl shadow-xs transition-colors text-center inline-flex items-center justify-center w-full sm:w-auto"
                 >
                   Explore Products
                 </Link>
@@ -192,7 +192,7 @@ export default function HomePage() {
                   href={heroWhatsAppUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="bg-white hover:bg-amber-50/50 text-[#C89A2B] border border-[#C89A2B] text-xs font-bold uppercase tracking-wider px-5 py-3.5 rounded-lg transition-colors text-center inline-flex items-center justify-center gap-2"
+                  className="bg-white hover:bg-amber-50/50 text-[#C89A2B] border border-[#C89A2B] text-xs font-bold uppercase tracking-wider px-5 py-3.5 rounded-xl transition-colors text-center inline-flex items-center justify-center gap-2 w-full sm:w-auto"
                 >
                   <MessageCircle className="w-4 h-4 text-[#C89A2B]" />
                   Order on WhatsApp
@@ -205,12 +205,12 @@ export default function HomePage() {
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ duration: 0.6, delay: 0.1 }}
-              className="lg:col-span-7 relative flex items-center justify-center lg:justify-end"
+              className="lg:col-span-7 relative flex items-center justify-center lg:justify-end mt-4 lg:mt-0"
             >
               <img
                 src="/hero-page-image.png"
                 alt="One Pack Eco Packaging Collection"
-                className="w-full max-w-lg lg:max-w-none h-auto object-contain object-right"
+                className="w-full max-w-md sm:max-w-lg lg:max-w-none h-auto object-contain object-center lg:object-right"
               />
             </motion.div>
 
@@ -286,7 +286,7 @@ export default function HomePage() {
           <div className="w-12 h-1 bg-[#C89A2B] mx-auto rounded-full mt-2" />
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-5">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-5">
           {featuredProducts.slice(0, 5).map((prod, idx) => {
             const productWhatsAppUrl = generateWhatsAppUrl({
               productName: prod.name,
@@ -442,7 +442,7 @@ export default function HomePage() {
             href={ctaWhatsAppUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-8 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-105 shrink-0 flex items-center gap-2.5 z-10"
+            className="bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs sm:text-sm font-bold uppercase tracking-wider px-6 sm:px-8 py-4 rounded-2xl shadow-xl transition-all transform hover:scale-105 shrink-0 flex items-center justify-center gap-2.5 z-10 w-full md:w-auto"
           >
             <MessageCircle className="w-5 h-5 fill-white/20" />
             Contact us today on WhatsApp
