@@ -32,7 +32,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         className="bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.05)] hover:shadow-[0_12px_30px_-6px_rgba(200,154,43,0.15)] transition-all duration-300 overflow-hidden flex flex-col justify-between group"
       >
         {/* Top Image Area */}
-        <div className="relative aspect-[4/3] bg-[#F8F8F8] overflow-hidden cursor-pointer" onClick={() => setIsModalOpen(true)}>
+        <Link href={`/products/${product.id}`} className="relative aspect-[4/3] bg-[#F8F8F8] overflow-hidden cursor-pointer block">
           <img
             src={product.image}
             alt={product.name}
@@ -68,14 +68,14 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             </Link>
           )}
 
-          {/* Quick View Hover Button */}
+          {/* View Details Hover Overlay */}
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">
             <span className="bg-white text-gray-800 font-bold text-xs px-4 py-2 rounded-xl shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform duration-200">
               <Eye className="w-4 h-4 text-[#C89A2B]" />
-              Quick View
+              View Details
             </span>
           </div>
-        </div>
+        </Link>
 
         {/* Content Body */}
         <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
@@ -83,12 +83,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <span className="text-[11px] font-bold uppercase tracking-wider text-[#C89A2B]">
               {product.categoryName}
             </span>
-            <h3
-              onClick={() => setIsModalOpen(true)}
-              className="text-base font-bold text-[#222222] font-heading mt-0.5 line-clamp-1 hover:text-[#C89A2B] transition-colors cursor-pointer"
-            >
-              {product.name}
-            </h3>
+            <Link href={`/products/${product.id}`}>
+              <h3 className="text-base font-bold text-[#222222] font-heading mt-0.5 line-clamp-1 hover:text-[#C89A2B] transition-colors cursor-pointer">
+                {product.name}
+              </h3>
+            </Link>
             <p className="text-xs text-gray-500 line-clamp-2 mt-1.5 leading-relaxed">
               {product.description}
             </p>
@@ -116,12 +115,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Action Buttons */}
           <div className="pt-1 flex items-center gap-2">
-            <button
-              onClick={() => setIsModalOpen(true)}
+            <Link
+              href={`/products/${product.id}`}
               className="flex-1 py-2.5 px-3 border border-gray-200 hover:border-[#C89A2B] text-gray-700 hover:text-[#C89A2B] text-xs font-bold uppercase tracking-wider rounded-xl transition-colors text-center"
             >
               Details
-            </button>
+            </Link>
             <a
               href={directWhatsAppUrl}
               target="_blank"

@@ -196,7 +196,7 @@ function ProductsContent() {
                     transition={{ duration: 0.3, delay: idx * 0.04 }}
                     className="bg-white p-4 rounded-2xl border border-gray-100 hover:border-[#C89A2B]/60 hover:ring-1 hover:ring-[#C89A2B]/30 hover:-translate-y-2 shadow-2xs hover:shadow-[0_20px_40px_-12px_rgba(200,154,43,0.2)] transition-all duration-300 flex flex-col justify-between group h-full cursor-pointer"
                   >
-                    <div>
+                    <Link href={`/products/${prod.id}`} className="block flex-1">
                       {/* Top Image Container */}
                       <div className="relative aspect-[4/3] bg-[#F8F8F8] rounded-xl overflow-hidden mb-4">
                         <img
@@ -222,17 +222,25 @@ function ProductsContent() {
                           <span className="text-gray-400">MOQ:</span> {prod.moq}
                         </p>
                       </div>
-                    </div>
+                    </Link>
 
-                    {/* Enquire Now Action Button */}
-                    <a
-                      href={productWhatsAppUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-full mt-4 py-2.5 px-3 border border-[#C89A2B] text-[#C89A2B] group-hover:bg-[#C89A2B] group-hover:text-white text-xs font-extrabold uppercase tracking-wider rounded-lg transition-all duration-300 text-center flex items-center justify-center gap-1.5"
-                    >
-                      ENQUIRE NOW
-                    </a>
+                    {/* Action Buttons Row */}
+                    <div className="pt-4 flex items-center gap-2">
+                      <Link
+                        href={`/products/${prod.id}`}
+                        className="flex-1 py-2 px-2 border border-gray-200 hover:border-[#C89A2B] text-gray-700 hover:text-[#C89A2B] text-[11px] font-extrabold uppercase tracking-wider rounded-lg transition-all text-center"
+                      >
+                        VIEW SPECS
+                      </Link>
+                      <a
+                        href={productWhatsAppUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex-1 py-2 px-2 bg-[#C89A2B] hover:bg-[#B38822] text-white text-[11px] font-extrabold uppercase tracking-wider rounded-lg transition-all text-center"
+                      >
+                        ENQUIRE
+                      </a>
+                    </div>
                   </motion.div>
                 );
               })}
