@@ -3,7 +3,21 @@
 import React, { useState, useMemo, Suspense } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Search, SlidersHorizontal, X, ArrowUpDown, Package, ChevronRight } from "lucide-react";
+import {
+  Search,
+  SlidersHorizontal,
+  X,
+  ArrowUpDown,
+  Package,
+  ChevronRight,
+  MessageCircle,
+  Phone,
+  ShieldCheck,
+  Leaf,
+  Truck,
+  Sparkles,
+  CheckCircle2
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useCms } from "@/context/CmsContext";
 
@@ -11,7 +25,7 @@ function ProductsContent() {
   const searchParams = useSearchParams();
   const initialCategory = searchParams.get("category") || "all";
 
-  const { products, categories, generateWhatsAppUrl } = useCms();
+  const { products, categories, siteConfig, generateWhatsAppUrl } = useCms();
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [sortBy, setSortBy] = useState<"featured" | "name-asc" | "name-desc">("featured");
@@ -30,6 +44,7 @@ function ProductsContent() {
           searchQuery.trim() === "" ||
           product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.categoryName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.material.toLowerCase().includes(searchQuery.toLowerCase()) ||
           product.sizes.some((s) => s.toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -45,10 +60,15 @@ function ProductsContent() {
 
   const activeCategoryObj = categories.find((c) => c.id === selectedCategory);
 
+  const sidebarWhatsAppUrl = generateWhatsAppUrl({
+    productName: "Bulk Wholesale Inquiry",
+    moq: "Wholesale Quantity"
+  });
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Top Header & Breadcrumb matching reference image */}
+      {/* Top Header & Breadcrumb */}
       <div className="space-y-1.5 pb-2">
         <h1 className="text-3xl sm:text-4xl font-black text-[#111111] font-heading tracking-tight">
           PRODUCTS
@@ -59,17 +79,19 @@ function ProductsContent() {
           </Link>
           <ChevronRight className="w-3.5 h-3.5 text-gray-400" />
           <span className="text-[#C89A2B]">
-            {selectedCategory === "all" ? "Products" : activeCategoryObj?.name || "Products"}
+            {selectedCategory === "all" ? "All Products" : activeCategoryObj?.name || "Products"}
           </span>
         </div>
       </div>
 
-      {/* Main Page Layout Grid (Left Sidebar + Right Products Grid) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Main Page Layout Grid (Sticky Left Sidebar + Right Products Grid) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         
-        {/* Left Sidebar Filters */}
-        <aside className="hidden lg:block lg:col-span-3 space-y-6">
-          <div className="bg-white rounded-xl border border-gray-200/80 shadow-2xs overflow-hidden">
+        {/* Left Sticky Sidebar Filters & Helpful Widgets */}
+        <aside className="hidden lg:block lg:col-span-3 space-y-5 sticky top-24 self-start">
+          
+          {/* Category Navigation List */}
+          <div className="bg-white rounded-2xl border border-gray-200/80 shadow-2xs overflow-hidden">
             <div className="p-4 border-b border-gray-100 bg-white flex items-center justify-between">
               <h3 className="text-xs font-black tracking-wider text-[#111111] uppercase font-heading">
                 CATEGORIES
@@ -84,7 +106,7 @@ function ProductsContent() {
               )}
             </div>
 
-            <div className="divide-y divide-gray-100 text-xs">
+            <div className="divide-y divide-gray-100 text-xs max-h-[380px] overflow-y-auto scrollbar-thin">
               <button
                 onClick={() => setSelectedCategory("all")}
                 className={`w-full text-left px-4 py-3 font-bold transition-colors flex items-center justify-between ${
@@ -94,7 +116,7 @@ function ProductsContent() {
                 }`}
               >
                 <span>All Products</span>
-                <span className={`text-[10px] px-2 py-0.5 rounded-full ${selectedCategory === "all" ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>
+                <span className={`text-[10px] px-2 py-0.5 rounded-full font-extrabold ${selectedCategory === "all" ? "bg-white/20 text-white" : "bg-gray-100 text-gray-600"}`}>
                   {products.length}
                 </span>
               </button>
@@ -114,7 +136,7 @@ function ProductsContent() {
                     }`}
                   >
                     <span className="truncate">{cat.name}</span>
-                    <span className={`text-[10px] px-2 py-0.5 rounded-full ${isSelected ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>
+                    <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold ${isSelected ? "bg-white/20 text-white" : "bg-gray-100 text-gray-500"}`}>
                       {count}
                     </span>
                   </button>
@@ -122,6 +144,69 @@ function ProductsContent() {
               })}
             </div>
           </div>
+
+          {/* Wholesale WhatsApp Callout Widget */}
+          <div className="bg-gradient-to-br from-[#FFFBF2] to-[#FDF4DF] p-4 rounded-2xl border border-[#F3E2B8] space-y-3 shadow-2xs">
+            <div className="flex items-center gap-2 text-[#C89A2B]">
+              <Sparkles className="w-4 h-4 shrink-0" />
+              <h4 className="text-xs font-black uppercase tracking-wider text-[#111111] font-heading">
+                WHOLESALE & BULK RATES
+              </h4>
+            </div>
+            <p className="text-[11px] text-gray-600 font-medium leading-relaxed">
+              Get bulk discount prices & official GST invoicing for Restaurants, Hotels & Caterers.
+            </p>
+            <a
+              href={sidebarWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full py-2.5 px-3 bg-[#C89A2B] hover:bg-[#B38822] text-white text-xs font-extrabold uppercase tracking-wider rounded-xl transition-all shadow-xs flex items-center justify-center gap-1.5 text-center"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>Bulk Order Quote</span>
+            </a>
+          </div>
+
+          {/* Trust Features & Certifications */}
+          <div className="bg-white p-4 rounded-2xl border border-gray-200/80 space-y-2.5 text-xs text-gray-700 shadow-2xs">
+            <h4 className="font-extrabold text-[#111111] uppercase tracking-wider font-heading border-b border-gray-100 pb-2 text-[11px]">
+              WHY CHOOSE ONE PACK?
+            </h4>
+            <div className="space-y-2 text-[11px] font-medium pt-0.5">
+              <div className="flex items-center gap-2 text-emerald-700">
+                <Leaf className="w-3.5 h-3.5 shrink-0" />
+                <span>100% Eco-Friendly & Bio</span>
+              </div>
+              <div className="flex items-center gap-2 text-amber-700">
+                <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                <span>Certified Food Grade Quality</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <Truck className="w-3.5 h-3.5 shrink-0 text-[#C89A2B]" />
+                <span>Delivery All Over Kasaragod</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-700">
+                <CheckCircle2 className="w-3.5 h-3.5 shrink-0 text-[#C89A2B]" />
+                <span>GST Compliant Invoicing</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Direct Support Card */}
+          <div className="bg-gray-900 text-white p-4 rounded-2xl space-y-2 text-xs shadow-md">
+            <div className="flex items-center gap-2 text-[#C89A2B]">
+              <Phone className="w-4 h-4" />
+              <span className="font-extrabold uppercase tracking-wider font-heading">Direct Helpline</span>
+            </div>
+            <p className="text-[11px] text-gray-300">Need custom sizing or urgent delivery?</p>
+            <a
+              href={`tel:${siteConfig.phoneNumber.replace(/[^0-9+]/g, "")}`}
+              className="block font-black text-xs text-[#C89A2B] hover:underline pt-0.5"
+            >
+              Call {siteConfig.phoneNumber}
+            </a>
+          </div>
+
         </aside>
 
         {/* Right Main Content Section */}
