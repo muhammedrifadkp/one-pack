@@ -62,6 +62,7 @@ export interface SiteConfig {
   googleMapEmbedUrl: string;
   cataloguePdfUrl: string;
   workingHours: string;
+  instagramUrl?: string;
 }
 
 export interface SEOConfig {

@@ -17,7 +17,8 @@ export const INITIAL_SITE_CONFIG: SiteConfig = {
   bioNotice: "WE ONLY SELL BIO PRODUCTS - NO PLASTIC",
   googleMapEmbedUrl: "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3898.3496464879036!2d75.09355!3d12.31688!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3ba47f524458b2bd%3A0x4a1804f58bdf0590!2sKanhangad%2C%20Kerala!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin",
   cataloguePdfUrl: "#download-catalogue",
-  workingHours: "Mon - Sat: 9:00 AM - 7:00 PM | Sun: Closed"
+  workingHours: "Mon - Sat: 9:00 AM - 7:00 PM | Sun: Closed",
+  instagramUrl: "https://www.instagram.com/onepack_official_/"
 };
 
 export const INITIAL_SEO_CONFIG: SEOConfig = {

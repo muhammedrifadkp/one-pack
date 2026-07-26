@@ -89,8 +89,12 @@ export async function getProductsFromStore(): Promise<Product[]> {
           return await autoSeedSupabase(supabaseUrl, supabaseKey);
         }
       }
-    } catch (err) {
-      console.warn("Failed to fetch products from Supabase:", err);
+    } catch (err: any) {
+      if (err?.cause?.code === "ENOTFOUND" || err?.code === "ENOTFOUND") {
+        // Quiet offline fallback when network is temporarily disconnected or DNS lookup fails
+      } else {
+        console.warn("Supabase fetch warning:", err?.message || err);
+      }
     }
   }
 

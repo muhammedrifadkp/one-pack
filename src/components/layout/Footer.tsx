@@ -6,9 +6,29 @@ import Image from "next/image";
 import { MessageCircle, Phone, Mail, MapPin, Download, Globe, Share2, FileCheck, ShieldCheck, Truck } from "lucide-react";
 import { useCms } from "@/context/CmsContext";
 
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 export const Footer: React.FC = () => {
   const { siteConfig, categories, generateWhatsAppUrl } = useCms();
 
+  const instagramUrl = siteConfig.instagramUrl || "https://www.instagram.com/onepack_official_/";
   const catalogueWhatsAppUrl = generateWhatsAppUrl({
     message: "Hi, please send me your latest PDF Product Catalogue and Wholesale Price List."
   });
@@ -44,31 +64,32 @@ export const Footer: React.FC = () => {
 
             <div className="flex items-center gap-3 pt-1">
               <a
-                href={catalogueWhatsAppUrl}
+                href={instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 hover:bg-[#C89A2B] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-200"
-                aria-label="Website"
+                className="w-9 h-9 rounded-full bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 hover:opacity-90 text-white flex items-center justify-center transition-all duration-200 shadow-md hover:scale-105"
+                aria-label="Instagram"
+                title="Follow us on Instagram @onepack_official_"
               >
-                <Globe className="w-4 h-4" />
+                <InstagramIcon className="w-4 h-4 text-white" />
               </a>
               <a
                 href={catalogueWhatsAppUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 hover:bg-[#C89A2B] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-200"
-                aria-label="Share"
-              >
-                <Share2 className="w-4 h-4" />
-              </a>
-              <a
-                href={catalogueWhatsAppUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-9 h-9 rounded-full bg-gray-800 hover:bg-[#C89A2B] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-200"
+                className="w-9 h-9 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center transition-colors duration-200 shadow-md hover:scale-105"
                 aria-label="WhatsApp"
+                title="Chat on WhatsApp"
               >
                 <MessageCircle className="w-4 h-4" />
+              </a>
+              <a
+                href={`tel:${siteConfig.phoneNumber.replace(/[^0-9+]/g, "")}`}
+                className="w-9 h-9 rounded-full bg-gray-800 hover:bg-[#C89A2B] text-gray-300 hover:text-white flex items-center justify-center transition-colors duration-200 shadow-md hover:scale-105"
+                aria-label="Phone Call"
+                title={`Call ${siteConfig.phoneNumber}`}
+              >
+                <Phone className="w-4 h-4" />
               </a>
             </div>
           </div>

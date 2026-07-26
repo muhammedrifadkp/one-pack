@@ -28,6 +28,7 @@ export const WhatsAppButton: React.FC = () => {
               onClick={() => setShowTooltip(false)}
               className="text-gray-400 hover:text-gray-600 transition-colors p-0.5"
               aria-label="Close tooltip"
+              suppressHydrationWarning
             >
               <X className="w-3 h-3" />
             </button>

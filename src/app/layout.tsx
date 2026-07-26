@@ -33,7 +33,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         {/* Google Fonts */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -66,7 +66,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="bg-white text-gray-800 flex flex-col min-h-screen">
+      <body className="bg-white text-gray-800 flex flex-col min-h-screen" suppressHydrationWarning>
         <CmsProvider>
           <Navbar />
           <main className="flex-1 pt-24 sm:pt-28 md:pt-32">{children}</main>

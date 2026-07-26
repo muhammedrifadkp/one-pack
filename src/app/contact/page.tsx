@@ -7,6 +7,25 @@ import * as z from "zod";
 import { Phone, Mail, MapPin, Clock, MessageCircle, Send, CheckCircle2, User, Building, MapPin as CityIcon, FileCheck, ShieldCheck, Truck } from "lucide-react";
 import { useCms } from "@/context/CmsContext";
 
+const InstagramIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    {...props}
+  >
+    <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+    <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+    <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+  </svg>
+);
+
 const contactSchema = z.object({
   name: z.string().min(2, "Name is required (at least 2 characters)"),
   phone: z.string().min(8, "Valid phone number is required"),
@@ -19,6 +38,7 @@ type ContactFormData = z.infer<typeof contactSchema>;
 
 export default function ContactPage() {
   const { siteConfig, generateWhatsAppUrl } = useCms();
+  const instagramUrl = siteConfig.instagramUrl || "https://www.instagram.com/onepack_official_/";
 
   const {
     register,
@@ -128,6 +148,24 @@ I would like to enquire about your products.`;
                     className="text-sm font-bold text-[#222222] hover:text-[#C89A2B] mt-0.5 block"
                   >
                     {siteConfig.email}
+                  </a>
+                </div>
+              </div>
+
+              {/* Official Instagram Handle */}
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-amber-500 via-rose-500 to-purple-600 text-white flex items-center justify-center shrink-0 shadow-sm">
+                  <InstagramIcon className="w-5 h-5" />
+                </div>
+                <div>
+                  <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider">Instagram Handle</h4>
+                  <a
+                    href={instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-sm font-extrabold text-rose-600 hover:underline mt-0.5 block"
+                  >
+                    @onepack_official_
                   </a>
                 </div>
               </div>

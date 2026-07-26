@@ -263,6 +263,7 @@ export const ProductAdminFormModal: React.FC<ProductAdminFormModalProps> = ({
           </div>
           <button
             onClick={onClose}
+            suppressHydrationWarning
             className="p-2 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-full transition-colors"
           >
             <X className="w-5 h-5" />
@@ -270,7 +271,7 @@ export const ProductAdminFormModal: React.FC<ProductAdminFormModalProps> = ({
         </div>
 
         {/* Modal Body */}
-        <form onSubmit={handleSubmit} className="p-6 space-y-6 overflow-y-auto flex-1 text-xs">
+        <form onSubmit={handleSubmit} suppressHydrationWarning className="p-6 space-y-6 overflow-y-auto flex-1 text-xs">
           {errorMsg && (
             <div className="p-3.5 bg-red-50 border border-red-200 text-red-600 rounded-xl font-semibold">
               {errorMsg}
