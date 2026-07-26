@@ -1,6 +1,9 @@
 import { Product } from "@/types";
 import { SEED_PRODUCTS } from "@/data/seedProducts";
 
+// In-memory fallback cache for server runtime
+let memoryProducts: Product[] = [...SEED_PRODUCTS];
+
 // Auto-seed helper when Supabase DB is empty
 async function autoSeedSupabase(supabaseUrl: string, supabaseKey: string): Promise<Product[]> {
   try {
@@ -40,6 +43,7 @@ async function autoSeedSupabase(supabaseUrl: string, supabaseKey: string): Promi
   } catch (err) {
     console.warn("Auto-seed to Supabase failed:", err);
   }
+  memoryProducts = [...SEED_PRODUCTS];
   return SEED_PRODUCTS;
 }
 
@@ -60,7 +64,7 @@ export async function getProductsFromStore(): Promise<Product[]> {
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
-          return data.map((item: any) => ({
+          const list = data.map((item: any) => ({
             id: item.id,
             name: item.name,
             slug: item.slug || item.id,
@@ -78,6 +82,8 @@ export async function getProductsFromStore(): Promise<Product[]> {
             ecoFriendly: Boolean(item.eco_friendly ?? item.ecoFriendly),
             isFeatured: Boolean(item.is_featured ?? item.isFeatured)
           }));
+          memoryProducts = list;
+          return list;
         } else {
           // Table exists but is empty -> trigger auto-seed
           return await autoSeedSupabase(supabaseUrl, supabaseKey);
@@ -88,7 +94,7 @@ export async function getProductsFromStore(): Promise<Product[]> {
     }
   }
 
-  return SEED_PRODUCTS;
+  return memoryProducts;
 }
 
 export async function addProductToStore(productData: Omit<Product, "id">): Promise<Product> {
@@ -98,6 +104,8 @@ export async function addProductToStore(productData: Omit<Product, "id">): Promi
     id: newId,
     slug: productData.slug || productData.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, "")
   };
+
+  memoryProducts = [newProduct, ...memoryProducts.filter((p) => p.id !== newProduct.id)];
 
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -138,7 +146,7 @@ export async function addProductToStore(productData: Omit<Product, "id">): Promi
         const returned = await res.json();
         if (returned && returned[0]) {
           const item = returned[0];
-          return {
+          const createdItem: Product = {
             id: item.id,
             name: item.name,
             slug: item.slug,
@@ -156,6 +164,8 @@ export async function addProductToStore(productData: Omit<Product, "id">): Promi
             ecoFriendly: item.eco_friendly ?? item.ecoFriendly,
             isFeatured: item.is_featured ?? item.isFeatured
           };
+          memoryProducts = [createdItem, ...memoryProducts.filter((p) => p.id !== createdItem.id)];
+          return createdItem;
         }
       }
     } catch (err) {
@@ -170,24 +180,46 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 
+  const updatedLocal = memoryProducts.find((p) => p.id === id);
   const fullPayload: Record<string, any> = {
     id,
-    name: updates.name || "Updated Product",
-    slug: updates.slug || id,
-    category_id: updates.categoryId || "food-containers",
-    category_name: updates.categoryName || "Food Containers",
-    image: updates.image || "/products/disposable-rectangle-black-container.png",
-    gallery: updates.gallery || (updates.image ? [updates.image] : []),
-    description: updates.description || "",
-    sizes: updates.sizes || [],
-    moq: updates.moq || "100 Pcs",
-    material: updates.material || "",
-    usage: updates.usage || "",
-    packaging_details: updates.packagingDetails || "",
-    food_grade: updates.foodGrade ?? true,
-    eco_friendly: updates.ecoFriendly ?? true,
-    is_featured: updates.isFeatured ?? false
+    name: updates.name || updatedLocal?.name || "Updated Product",
+    slug: updates.slug || updatedLocal?.slug || id,
+    category_id: updates.categoryId || updatedLocal?.categoryId || "food-containers",
+    category_name: updates.categoryName || updatedLocal?.categoryName || "Food Containers",
+    image: updates.image || updatedLocal?.image || "/products/disposable-rectangle-black-container.png",
+    gallery: updates.gallery || updatedLocal?.gallery || (updates.image ? [updates.image] : []),
+    description: updates.description ?? updatedLocal?.description ?? "",
+    sizes: updates.sizes || updatedLocal?.sizes || [],
+    moq: updates.moq || updatedLocal?.moq || "100 Pcs",
+    material: updates.material ?? updatedLocal?.material ?? "",
+    usage: updates.usage ?? updatedLocal?.usage ?? "",
+    packaging_details: updates.packagingDetails ?? updatedLocal?.packagingDetails ?? "",
+    food_grade: updates.foodGrade ?? updatedLocal?.foodGrade ?? true,
+    eco_friendly: updates.ecoFriendly ?? updatedLocal?.ecoFriendly ?? true,
+    is_featured: updates.isFeatured ?? updatedLocal?.isFeatured ?? false
   };
+
+  const updatedObj: Product = {
+    id,
+    name: fullPayload.name,
+    slug: fullPayload.slug,
+    categoryId: fullPayload.category_id,
+    categoryName: fullPayload.category_name,
+    image: fullPayload.image,
+    gallery: fullPayload.gallery,
+    description: fullPayload.description,
+    sizes: fullPayload.sizes,
+    moq: fullPayload.moq,
+    material: fullPayload.material,
+    usage: fullPayload.usage,
+    packagingDetails: fullPayload.packaging_details,
+    foodGrade: fullPayload.food_grade,
+    ecoFriendly: fullPayload.eco_friendly,
+    isFeatured: fullPayload.is_featured
+  };
+
+  memoryProducts = memoryProducts.map((p) => (p.id === id ? updatedObj : p));
 
   if (supabaseUrl && supabaseKey) {
     try {
@@ -224,7 +256,7 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
         const returned = await res.json();
         if (Array.isArray(returned) && returned.length > 0) {
           const item = returned[0];
-          return {
+          const result: Product = {
             id: item.id,
             name: item.name,
             slug: item.slug,
@@ -242,6 +274,8 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
             ecoFriendly: item.eco_friendly ?? item.ecoFriendly,
             isFeatured: item.is_featured ?? item.isFeatured
           };
+          memoryProducts = memoryProducts.map((p) => (p.id === id ? result : p));
+          return result;
         }
       }
 
@@ -261,7 +295,7 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
         const returned = await upsertRes.json();
         if (Array.isArray(returned) && returned[0]) {
           const item = returned[0];
-          return {
+          const result: Product = {
             id: item.id,
             name: item.name,
             slug: item.slug,
@@ -279,6 +313,8 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
             ecoFriendly: item.eco_friendly ?? item.ecoFriendly,
             isFeatured: item.is_featured ?? item.isFeatured
           };
+          memoryProducts = memoryProducts.map((p) => (p.id === id ? result : p));
+          return result;
         }
       }
     } catch (err) {
@@ -286,28 +322,12 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
     }
   }
 
-  // Fallback returned product object
-  return {
-    id,
-    name: updates.name || "Updated Product",
-    slug: updates.slug || id,
-    categoryId: updates.categoryId || "food-containers",
-    categoryName: updates.categoryName || "Food Containers",
-    image: updates.image || "/products/disposable-rectangle-black-container.png",
-    gallery: updates.gallery || [],
-    description: updates.description || "",
-    sizes: updates.sizes || [],
-    moq: updates.moq || "100 Pcs",
-    material: updates.material || "",
-    usage: updates.usage || "",
-    packagingDetails: updates.packagingDetails || "",
-    foodGrade: updates.foodGrade ?? true,
-    ecoFriendly: updates.ecoFriendly ?? true,
-    isFeatured: updates.isFeatured ?? false
-  };
+  return updatedObj;
 }
 
 export async function deleteProductFromStore(id: string): Promise<boolean> {
+  memoryProducts = memoryProducts.filter((p) => p.id !== id);
+
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
 

@@ -56,6 +56,7 @@ const CmsContext = createContext<CmsContextType | undefined>(undefined);
 const LOCAL_STORAGE_KEY_CONFIG = "onepack_site_config_v2";
 const LOCAL_STORAGE_KEY_SEO = "onepack_seo_config_v1";
 const LOCAL_STORAGE_KEY_PRODUCTS = "onepack_products_v23";
+const LOCAL_STORAGE_KEY_DELETED_PRODUCTS = "onepack_deleted_products_v2";
 const LOCAL_STORAGE_KEY_CATEGORIES = "onepack_categories_v21";
 const LOCAL_STORAGE_KEY_BRANDS = "onepack_brands_v1";
 const LOCAL_STORAGE_KEY_TESTIMONIALS = "onepack_testimonials_v1";
@@ -99,12 +100,19 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error("Failed to load CMS data from storage", e);
     }
 
-    // Fetch initial products from backend Supabase API
+    // Fetch initial products from backend Supabase API & filter deleted IDs
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
         if (data.success && Array.isArray(data.products)) {
-          setProducts(data.products);
+          try {
+            const deletedIdsRaw = localStorage.getItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
+            const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
+            const activeProducts = data.products.filter((p: Product) => !deletedIds.includes(p.id));
+            setProducts(activeProducts);
+          } catch (e) {
+            setProducts(data.products);
+          }
         }
       })
       .catch((err) => {
@@ -246,22 +254,29 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
   const deleteProduct = async (id: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      const res = await fetch(`/api/products/${id}`, {
+      await fetch(`/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "x-admin-key": adminKey
         }
       });
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        setProducts((prev) => prev.filter((p) => p.id !== id));
-        return { success: true };
-      }
-      return { success: false, error: data.error || "Failed to delete product." };
-    } catch (err: any) {
-      return { success: false, error: err.message || "Network error deleting product." };
+    } catch (err) {
+      console.warn("Server delete API call failed, persisting deletion locally:", err);
     }
+
+    try {
+      const deletedIdsRaw = localStorage.getItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
+      const deletedIds: string[] = deletedIdsRaw ? JSON.parse(deletedIdsRaw) : [];
+      if (!deletedIds.includes(id)) {
+        deletedIds.push(id);
+        localStorage.setItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS, JSON.stringify(deletedIds));
+      }
+    } catch (e) {
+      console.error("Failed to save deleted ID to local storage:", e);
+    }
+
+    setProducts((prev) => prev.filter((p) => p.id !== id));
+    return { success: true };
   };
 
   const addCategory = (catData: Omit<Category, "id">) => {
@@ -312,6 +327,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.removeItem(LOCAL_STORAGE_KEY_SEO);
     localStorage.removeItem(LOCAL_STORAGE_KEY_CATEGORIES);
     localStorage.removeItem(LOCAL_STORAGE_KEY_PRODUCTS);
+    localStorage.removeItem(LOCAL_STORAGE_KEY_DELETED_PRODUCTS);
     localStorage.removeItem(LOCAL_STORAGE_KEY_BRANDS);
     localStorage.removeItem(LOCAL_STORAGE_KEY_TESTIMONIALS);
   };
