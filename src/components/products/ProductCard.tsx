@@ -2,7 +2,8 @@
 
 import React, { useState } from "react";
 import Image from "next/image";
-import { Leaf, ShieldCheck, MessageCircle, Eye, Box, Layers } from "lucide-react";
+import Link from "next/link";
+import { Leaf, ShieldCheck, MessageCircle, Eye, Box, Layers, Edit } from "lucide-react";
 import { motion } from "framer-motion";
 import { Product } from "@/types";
 import { useCms } from "@/context/CmsContext";
@@ -13,7 +14,7 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { generateWhatsAppUrl } = useCms();
+  const { generateWhatsAppUrl, isAdminAuthenticated } = useCms();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedSize, setSelectedSize] = useState(product.sizes[0] || "");
 
@@ -54,6 +55,18 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
               </span>
             )}
           </div>
+
+          {/* Admin Edit Shortcut Badge */}
+          {isAdminAuthenticated && (
+            <Link
+              href="/admin"
+              onClick={(e) => e.stopPropagation()}
+              className="absolute top-3 right-3 bg-gray-900/80 hover:bg-[#C89A2B] text-white p-2 rounded-full backdrop-blur-md shadow-md z-20 transition-colors"
+              title="Edit in Admin Panel"
+            >
+              <Edit className="w-3.5 h-3.5" />
+            </Link>
+          )}
 
           {/* Quick View Hover Button */}
           <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center justify-center">

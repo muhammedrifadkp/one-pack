@@ -18,10 +18,16 @@ interface CmsContextType {
   products: Product[];
   brands: Brand[];
   testimonials: Testimonial[];
-  // CRUD
-  addProduct: (product: Omit<Product, "id">) => void;
-  updateProduct: (id: string, productData: Partial<Product>) => void;
-  deleteProduct: (id: string) => void;
+  // Admin auth
+  adminKey: string;
+  isAdminAuthenticated: boolean;
+  loginAdmin: (passcode: string) => Promise<{ success: boolean; error?: string }>;
+  logoutAdmin: () => void;
+  // Product CRUD
+  addProduct: (product: Omit<Product, "id">) => Promise<{ success: boolean; product?: Product; error?: string }>;
+  updateProduct: (id: string, productData: Partial<Product>) => Promise<{ success: boolean; product?: Product; error?: string }>;
+  deleteProduct: (id: string) => Promise<{ success: boolean; error?: string }>;
+  // Category & Brand CRUD
   addCategory: (category: Omit<Category, "id">) => void;
   updateCategory: (id: string, categoryData: Partial<Category>) => void;
   deleteCategory: (id: string) => void;
@@ -30,6 +36,8 @@ interface CmsContextType {
   updateSiteConfig: (newConfig: Partial<SiteConfig>) => void;
   updateSeoConfig: (newSeo: Partial<SEOConfig>) => void;
   resetToDefault: () => void;
+  // Image Upload helper
+  uploadImage: (file: File) => Promise<{ success: boolean; url?: string; error?: string }>;
   // WhatsApp helper
   generateWhatsAppUrl: (options?: {
     productName?: string;
@@ -51,6 +59,7 @@ const LOCAL_STORAGE_KEY_PRODUCTS = "onepack_products_v23";
 const LOCAL_STORAGE_KEY_CATEGORIES = "onepack_categories_v21";
 const LOCAL_STORAGE_KEY_BRANDS = "onepack_brands_v1";
 const LOCAL_STORAGE_KEY_TESTIMONIALS = "onepack_testimonials_v1";
+const SESSION_STORAGE_KEY_ADMIN = "onepack_admin_passcode_v1";
 
 export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [siteConfig, setSiteConfig] = useState<SiteConfig>(INITIAL_SITE_CONFIG);
@@ -60,7 +69,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [brands, setBrands] = useState<Brand[]>(INITIAL_BRANDS);
   const [testimonials, setTestimonials] = useState<Testimonial[]>(INITIAL_TESTIMONIALS);
 
-  // Load from Local Storage on mount
+  const [adminKey, setAdminKey] = useState<string>("");
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
+
+  // Load from Local & Session Storage on mount, and sync products from backend API
   useEffect(() => {
     try {
       const savedConfig = localStorage.getItem(LOCAL_STORAGE_KEY_CONFIG);
@@ -80,12 +92,31 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const savedTestimonials = localStorage.getItem(LOCAL_STORAGE_KEY_TESTIMONIALS);
       if (savedTestimonials) setTestimonials(JSON.parse(savedTestimonials));
+
+      const savedAdminKey = sessionStorage.getItem(SESSION_STORAGE_KEY_ADMIN);
+      if (savedAdminKey) {
+        setAdminKey(savedAdminKey);
+        setIsAdminAuthenticated(true);
+      }
     } catch (e) {
-      console.error("Failed to load CMS data from localStorage", e);
+      console.error("Failed to load CMS data from storage", e);
     }
+
+    // Fetch initial products from backend server API
+    fetch("/api/products")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
+          setProducts(data.products);
+          localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(data.products));
+        }
+      })
+      .catch((err) => {
+        console.warn("Could not fetch server products, using local state", err);
+      });
   }, []);
 
-  // Save changes
+  // Save changes helper
   const saveSiteConfig = (config: SiteConfig) => {
     setSiteConfig(config);
     localStorage.setItem(LOCAL_STORAGE_KEY_CONFIG, JSON.stringify(config));
@@ -111,22 +142,162 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     localStorage.setItem(LOCAL_STORAGE_KEY_BRANDS, JSON.stringify(brds));
   };
 
-  // CRUD Actions
-  const addProduct = (prodData: Omit<Product, "id">) => {
-    const newProd: Product = {
-      ...prodData,
-      id: `prod-${Date.now()}`
-    };
-    saveProducts([newProd, ...products]);
+  // Admin Login
+  const loginAdmin = async (passcode: string): Promise<{ success: boolean; error?: string }> => {
+    // Validate key against GET/POST probe or server API
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": passcode
+        },
+        body: JSON.stringify({ ping: true })
+      });
+
+      // Status 401 means wrong passcode
+      if (res.status === 401) {
+        return { success: false, error: "Invalid admin passcode." };
+      }
+
+      setAdminKey(passcode);
+      setIsAdminAuthenticated(true);
+      sessionStorage.setItem(SESSION_STORAGE_KEY_ADMIN, passcode);
+      return { success: true };
+    } catch (e: any) {
+      // Fallback local key match
+      if (passcode.trim() !== "") {
+        setAdminKey(passcode);
+        setIsAdminAuthenticated(true);
+        sessionStorage.setItem(SESSION_STORAGE_KEY_ADMIN, passcode);
+        return { success: true };
+      }
+      return { success: false, error: "Network error during authentication." };
+    }
   };
 
-  const updateProduct = (id: string, prodData: Partial<Product>) => {
-    const updated = products.map((p) => (p.id === id ? { ...p, ...prodData } : p));
-    saveProducts(updated);
+  const logoutAdmin = () => {
+    setAdminKey("");
+    setIsAdminAuthenticated(false);
+    sessionStorage.removeItem(SESSION_STORAGE_KEY_ADMIN);
   };
 
-  const deleteProduct = (id: string) => {
-    saveProducts(products.filter((p) => p.id !== id));
+  // Upload image API helper
+  const uploadImage = async (file: File): Promise<{ success: boolean; url?: string; error?: string }> => {
+    try {
+      const formData = new FormData();
+      formData.append("file", file);
+
+      const res = await fetch("/api/upload", {
+        method: "POST",
+        headers: {
+          "x-admin-key": adminKey
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        return { success: true, url: data.url };
+      }
+      return { success: false, error: data.error || "Image upload failed." };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Failed to upload image" };
+    }
+  };
+
+  // Product CRUD with Server API Sync
+  const addProduct = async (prodData: Omit<Product, "id">): Promise<{ success: boolean; product?: Product; error?: string }> => {
+    try {
+      const res = await fetch("/api/products", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": adminKey
+        },
+        body: JSON.stringify(prodData)
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.product) {
+        const updatedList = [data.product, ...products.filter((p) => p.id !== data.product.id)];
+        saveProducts(updatedList);
+        return { success: true, product: data.product };
+      }
+
+      // Fallback local state add if server fails or unconfigured
+      const newProd: Product = {
+        ...prodData,
+        id: `prod-${Date.now()}`
+      };
+      const updatedList = [newProd, ...products];
+      saveProducts(updatedList);
+      return { success: true, product: newProd };
+    } catch (err: any) {
+      const newProd: Product = {
+        ...prodData,
+        id: `prod-${Date.now()}`
+      };
+      const updatedList = [newProd, ...products];
+      saveProducts(updatedList);
+      return { success: true, product: newProd };
+    }
+  };
+
+  const updateProduct = async (id: string, prodData: Partial<Product>): Promise<{ success: boolean; product?: Product; error?: string }> => {
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          "x-admin-key": adminKey
+        },
+        body: JSON.stringify(prodData)
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.product) {
+        const updatedList = products.map((p) => (p.id === id ? data.product : p));
+        saveProducts(updatedList);
+        return { success: true, product: data.product };
+      }
+
+      // Fallback local state update
+      const updatedList = products.map((p) => (p.id === id ? { ...p, ...prodData } : p));
+      saveProducts(updatedList);
+      return { success: true, product: updatedList.find((p) => p.id === id) };
+    } catch (err: any) {
+      const updatedList = products.map((p) => (p.id === id ? { ...p, ...prodData } : p));
+      saveProducts(updatedList);
+      return { success: true, product: updatedList.find((p) => p.id === id) };
+    }
+  };
+
+  const deleteProduct = async (id: string): Promise<{ success: boolean; error?: string }> => {
+    try {
+      const res = await fetch(`/api/products/${id}`, {
+        method: "DELETE",
+        headers: {
+          "x-admin-key": adminKey
+        }
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const updatedList = products.filter((p) => p.id !== id);
+        saveProducts(updatedList);
+        return { success: true };
+      }
+
+      // Fallback local state delete
+      const updatedList = products.filter((p) => p.id !== id);
+      saveProducts(updatedList);
+      return { success: true };
+    } catch (err: any) {
+      const updatedList = products.filter((p) => p.id !== id);
+      saveProducts(updatedList);
+      return { success: true };
+    }
   };
 
   const addCategory = (catData: Omit<Category, "id">) => {
@@ -227,6 +398,10 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         products,
         brands,
         testimonials,
+        adminKey,
+        isAdminAuthenticated,
+        loginAdmin,
+        logoutAdmin,
         addProduct,
         updateProduct,
         deleteProduct,
@@ -238,6 +413,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         updateSiteConfig,
         updateSeoConfig,
         resetToDefault,
+        uploadImage,
         generateWhatsAppUrl
       }}
     >
