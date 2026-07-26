@@ -1,8 +1,47 @@
 import { Product } from "@/types";
-import { INITIAL_PRODUCTS } from "@/data/initialData";
+import { SEED_PRODUCTS } from "@/data/seedProducts";
 
-// In-memory fallback cache for server runtime
-let memoryProducts: Product[] = [...INITIAL_PRODUCTS];
+// Auto-seed helper when Supabase DB is empty
+async function autoSeedSupabase(supabaseUrl: string, supabaseKey: string): Promise<Product[]> {
+  try {
+    const payload = SEED_PRODUCTS.map((prod) => ({
+      id: prod.id,
+      name: prod.name,
+      slug: prod.slug,
+      category_id: prod.categoryId,
+      category_name: prod.categoryName,
+      image: prod.image,
+      gallery: prod.gallery,
+      description: prod.description,
+      sizes: prod.sizes,
+      moq: prod.moq,
+      material: prod.material,
+      usage: prod.usage,
+      packaging_details: prod.packagingDetails,
+      food_grade: prod.foodGrade,
+      eco_friendly: prod.ecoFriendly,
+      is_featured: prod.isFeatured
+    }));
+
+    const res = await fetch(`${supabaseUrl}/rest/v1/products`, {
+      method: "POST",
+      headers: {
+        apikey: supabaseKey,
+        Authorization: `Bearer ${supabaseKey}`,
+        "Content-Type": "application/json",
+        Prefer: "resolution=merge-duplicates,return=representation"
+      },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok) {
+      console.log("Successfully auto-seeded Supabase products table.");
+    }
+  } catch (err) {
+    console.warn("Auto-seed to Supabase failed:", err);
+  }
+  return SEED_PRODUCTS;
+}
 
 export async function getProductsFromStore(): Promise<Product[]> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -10,13 +49,14 @@ export async function getProductsFromStore(): Promise<Product[]> {
 
   if (supabaseUrl && supabaseKey) {
     try {
-      const res = await fetch(`${supabaseUrl}/rest/v1/products?select=*&order=isFeatured.desc,name.asc`, {
+      const res = await fetch(`${supabaseUrl}/rest/v1/products?select=*&order=is_featured.desc,name.asc`, {
         headers: {
           apikey: supabaseKey,
           Authorization: `Bearer ${supabaseKey}`
         },
-        next: { revalidate: 60 }
+        cache: "no-store"
       });
+
       if (res.ok) {
         const data = await res.json();
         if (Array.isArray(data) && data.length > 0) {
@@ -38,14 +78,17 @@ export async function getProductsFromStore(): Promise<Product[]> {
             ecoFriendly: Boolean(item.eco_friendly ?? item.ecoFriendly),
             isFeatured: Boolean(item.is_featured ?? item.isFeatured)
           }));
+        } else {
+          // Table exists but is empty -> trigger auto-seed
+          return await autoSeedSupabase(supabaseUrl, supabaseKey);
         }
       }
     } catch (err) {
-      console.warn("Failed to fetch products from Supabase, falling back to memory store:", err);
+      console.warn("Failed to fetch products from Supabase:", err);
     }
   }
 
-  return memoryProducts;
+  return SEED_PRODUCTS;
 }
 
 export async function addProductToStore(productData: Omit<Product, "id">): Promise<Product> {
@@ -116,12 +159,10 @@ export async function addProductToStore(productData: Omit<Product, "id">): Promi
         }
       }
     } catch (err) {
-      console.error("Supabase insert failed, adding to memory fallback:", err);
+      console.error("Supabase insert failed:", err);
     }
   }
 
-  // Fallback to memory
-  memoryProducts = [newProduct, ...memoryProducts];
   return newProduct;
 }
 
@@ -184,20 +225,11 @@ export async function updateProductInStore(id: string, updates: Partial<Product>
         }
       }
     } catch (err) {
-      console.error("Supabase update failed, updating memory fallback:", err);
+      console.error("Supabase update failed:", err);
     }
   }
 
-  let updatedProd: Product | null = null;
-  memoryProducts = memoryProducts.map((p) => {
-    if (p.id === id) {
-      updatedProd = { ...p, ...updates };
-      return updatedProd;
-    }
-    return p;
-  });
-
-  return updatedProd;
+  return null;
 }
 
 export async function deleteProductFromStore(id: string): Promise<boolean> {
@@ -214,15 +246,12 @@ export async function deleteProductFromStore(id: string): Promise<boolean> {
         }
       });
       if (res.ok) {
-        memoryProducts = memoryProducts.filter((p) => p.id !== id);
         return true;
       }
     } catch (err) {
-      console.error("Supabase delete failed, removing from memory fallback:", err);
+      console.error("Supabase delete failed:", err);
     }
   }
 
-  const initialLength = memoryProducts.length;
-  memoryProducts = memoryProducts.filter((p) => p.id !== id);
-  return memoryProducts.length < initialLength;
+  return false;
 }

@@ -72,7 +72,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [adminKey, setAdminKey] = useState<string>("");
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean>(false);
 
-  // Load from Local & Session Storage on mount, and sync products from backend API
+  // Load from Local & Session Storage on mount, and sync products from backend Supabase API
   useEffect(() => {
     try {
       const savedConfig = localStorage.getItem(LOCAL_STORAGE_KEY_CONFIG);
@@ -83,9 +83,6 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
 
       const savedCategories = localStorage.getItem(LOCAL_STORAGE_KEY_CATEGORIES);
       if (savedCategories) setCategories(JSON.parse(savedCategories));
-
-      const savedProducts = localStorage.getItem(LOCAL_STORAGE_KEY_PRODUCTS);
-      if (savedProducts) setProducts(JSON.parse(savedProducts));
 
       const savedBrands = localStorage.getItem(LOCAL_STORAGE_KEY_BRANDS);
       if (savedBrands) setBrands(JSON.parse(savedBrands));
@@ -102,27 +99,16 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       console.error("Failed to load CMS data from storage", e);
     }
 
-    // Fetch initial products from backend server API
+    // Fetch initial products from backend Supabase API
     fetch("/api/products")
       .then((res) => res.json())
       .then((data) => {
-        if (data.success && Array.isArray(data.products) && data.products.length > 0) {
-          setProducts((currentProds) => {
-            // Build a map to merge server data with local browser additions
-            const map = new Map<string, Product>();
-            // Add server products first
-            data.products.forEach((p: Product) => map.set(p.id, p));
-            // Preserve/override with current local products (prevents overwriting local additions if server runs in fallback)
-            currentProds.forEach((p: Product) => map.set(p.id, p));
-
-            const mergedList = Array.from(map.values());
-            localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(mergedList));
-            return mergedList;
-          });
+        if (data.success && Array.isArray(data.products)) {
+          setProducts(data.products);
         }
       })
       .catch((err) => {
-        console.warn("Could not fetch server products, using local state", err);
+        console.warn("Could not fetch server products:", err);
       });
   }, []);
 
@@ -135,11 +121,6 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const saveSeoConfig = (seo: SEOConfig) => {
     setSeoConfig(seo);
     localStorage.setItem(LOCAL_STORAGE_KEY_SEO, JSON.stringify(seo));
-  };
-
-  const saveProducts = (prods: Product[]) => {
-    setProducts(prods);
-    localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(prods));
   };
 
   const saveCategories = (cats: Category[]) => {
@@ -216,7 +197,7 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   };
 
-  // Product CRUD with Server API Sync
+  // Product CRUD with Supabase API Sync
   const addProduct = async (prodData: Omit<Product, "id">): Promise<{ success: boolean; product?: Product; error?: string }> => {
     try {
       const res = await fetch("/api/products", {
@@ -229,34 +210,14 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       const data = await res.json();
-      let created: Product;
       if (res.ok && data.success && data.product) {
-        created = data.product;
-      } else {
-        created = {
-          ...prodData,
-          id: `prod-${Date.now()}`
-        };
+        const created = data.product;
+        setProducts((prev) => [created, ...prev.filter((p) => p.id !== created.id)]);
+        return { success: true, product: created };
       }
-
-      setProducts((prev) => {
-        const updatedList = [created, ...prev.filter((p) => p.id !== created.id)];
-        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
-        return updatedList;
-      });
-
-      return { success: true, product: created };
+      return { success: false, error: data.error || "Failed to add product." };
     } catch (err: any) {
-      const newProd: Product = {
-        ...prodData,
-        id: `prod-${Date.now()}`
-      };
-      setProducts((prev) => {
-        const updatedList = [newProd, ...prev.filter((p) => p.id !== newProd.id)];
-        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
-        return updatedList;
-      });
-      return { success: true, product: newProd };
+      return { success: false, error: err.message || "Network error adding product." };
     }
   };
 
@@ -272,51 +233,35 @@ export const CmsProvider: React.FC<{ children: React.ReactNode }> = ({ children 
       });
 
       const data = await res.json();
-      let updated: Product | undefined;
       if (res.ok && data.success && data.product) {
-        updated = data.product;
+        const updated = data.product;
+        setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+        return { success: true, product: updated };
       }
-
-      setProducts((prev) => {
-        const updatedList = prev.map((p) => {
-          if (p.id === id) {
-            return updated || { ...p, ...prodData };
-          }
-          return p;
-        });
-        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
-        return updatedList;
-      });
-
-      return { success: true, product: updated };
+      return { success: false, error: data.error || "Failed to update product." };
     } catch (err: any) {
-      setProducts((prev) => {
-        const updatedList = prev.map((p) => (p.id === id ? { ...p, ...prodData } : p));
-        localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
-        return updatedList;
-      });
-      return { success: true };
+      return { success: false, error: err.message || "Network error updating product." };
     }
   };
 
   const deleteProduct = async (id: string): Promise<{ success: boolean; error?: string }> => {
     try {
-      await fetch(`/api/products/${id}`, {
+      const res = await fetch(`/api/products/${id}`, {
         method: "DELETE",
         headers: {
           "x-admin-key": adminKey
         }
       });
-    } catch (err) {
-      console.warn("Server delete call failed, removing locally", err);
-    }
 
-    setProducts((prev) => {
-      const updatedList = prev.filter((p) => p.id !== id);
-      localStorage.setItem(LOCAL_STORAGE_KEY_PRODUCTS, JSON.stringify(updatedList));
-      return updatedList;
-    });
-    return { success: true };
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setProducts((prev) => prev.filter((p) => p.id !== id));
+        return { success: true };
+      }
+      return { success: false, error: data.error || "Failed to delete product." };
+    } catch (err: any) {
+      return { success: false, error: err.message || "Network error deleting product." };
+    }
   };
 
   const addCategory = (catData: Omit<Category, "id">) => {
