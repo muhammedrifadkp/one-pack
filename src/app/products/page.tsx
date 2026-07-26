@@ -202,6 +202,8 @@ function ProductsContent() {
                         <img
                           src={prod.image}
                           alt={prod.name}
+                          loading="lazy"
+                          decoding="async"
                           className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500 ease-out"
                         />
                       </div>

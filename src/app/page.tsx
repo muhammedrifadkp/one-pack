@@ -210,6 +210,8 @@ export default function HomePage() {
               <img
                 src="/hero-page-image.png"
                 alt="One Pack Eco Packaging Collection"
+                decoding="async"
+                fetchPriority="high"
                 className="w-full max-w-md sm:max-w-lg lg:max-w-none h-auto object-contain object-center lg:object-right"
               />
             </motion.div>
@@ -309,6 +311,8 @@ export default function HomePage() {
                     <img
                       src={prod.image}
                       alt={prod.name}
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover object-center group-hover:scale-108 transition-transform duration-500 ease-out"
                     />
                   </div>
